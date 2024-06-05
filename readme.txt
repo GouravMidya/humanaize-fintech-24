@@ -1,0 +1,1 @@
+Team Pixel Pulse's proposed solution for the problem statement __ in hack2skill humanaize fintech edition hackathon
