@@ -1,0 +1,19 @@
+.message {
+    margin: 10px 0;
+}
+
+.message.user .message-content {
+    background-color: #007bff;
+    color: white;
+    padding: 10px;
+    border-radius: 10px;
+    text-align: right;
+}
+
+.message.bot .message-content {
+    background-color: #f1f1f1;
+    color: black;
+    padding: 10px;
+    border-radius: 10px;
+    text-align: left;
+}
