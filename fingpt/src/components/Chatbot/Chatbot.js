@@ -5,6 +5,8 @@ import Sidebar from '../Sidebar/Sidebar';
 import { Box, TextField, IconButton } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
 import favicon from '../Chatbot/favicon.ico'; // Adjust the path as necessary
+import axios from 'axios';
+
 
 const Chatbot = () => {
     const [conversations, setConversations] = useState([{ id: 1, messages: [], name: '' }]);
@@ -21,17 +23,23 @@ const Chatbot = () => {
                         : conv
                 )
             );
-            setInput('');
 
-            // Simulate chatbot response
-            const response = { sender: 'bot', text: 'This is a sample response' };
-            setConversations((prevConversations) =>
-                prevConversations.map((conv) =>
-                    conv.id === currentConversationId
-                        ? { ...conv, messages: [...conv.messages, response] }
-                        : conv
-                )
-            );
+            // Send user input to the backend API
+            try {
+                const response = await axios.post('http://localhost:8000/api/query', { query: input });
+                const botMessage = { sender: 'bot', text: response.data.response };
+                setConversations((prevConversations) =>
+                    prevConversations.map((conv) =>
+                        conv.id === currentConversationId
+                            ? { ...conv, messages: [...conv.messages, botMessage] }
+                            : conv
+                    )
+                );
+            } catch (error) {
+                console.error('Error sending message to API:', error);
+            }
+
+            setInput('');
         }
     };
 

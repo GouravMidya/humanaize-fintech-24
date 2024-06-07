@@ -2,7 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 
 #%% fetching
-url = "https://www.fidelity.com/learning-center/personal-finance/saving-and-budgeting-money"
+url = "https://en.wikipedia.org/wiki/Personal_finance"
 response = requests.get(url)
 print(response.status_code)
 soup = BeautifulSoup(response.content, 'html.parser')
