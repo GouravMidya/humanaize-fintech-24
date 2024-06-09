@@ -8,6 +8,7 @@ from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_community.chat_models import ChatOllama
 from langchain.prompts import PromptTemplate
 from langchain_core.output_parsers import StrOutputParser
+from langchain_core.output_parsers import JsonOutputParser
 
 app = FastAPI()
 
@@ -33,19 +34,22 @@ vectordb = Chroma(persist_directory=persist_directory, embedding_function=embedd
 retriever = vectordb.as_retriever(search_type="mmr")
 llm = ChatOllama(model=local_llm, format="json", temperature=0)
 
+# Set up a parser + inject instructions into the prompt template.
+parser = JsonOutputParser()
+
 prompt = PromptTemplate(
     template="""You are an assistant for question-answering tasks.
     Use the following pieces of retrieved context to answer the question
     meaningfully. If you don't know the answer, just say that you don't know.
-    Use six sentences maximum and keep the answer concise and respond in
-    json
+    Use six sentences maximum and keep the answer concise
     {context}
     Question: {question}
     Helpful Answer:""",
     input_variables=["question", "context"],
+    partial_variables={"format_instructions": parser.get_format_instructions()},
 )
 
-rag_chain = prompt | llm | StrOutputParser()
+rag_chain = prompt | llm | parser
 
 class Query(BaseModel):
     query: str
