@@ -1,0 +1,87 @@
+Query,Response,Time_taken
+What is stagflation?,{'answer': 'no answer'},0:00:29.222060
+What is hyperinflation?,{'answer': 'no answer'},0:00:25.954085
+What is the Consumer Price Index (CPI)?,"{'answer': 'The Consumer Price Index (CPI) measures the average nationwide prices of a consistent base of products that consumers buy and use daily, such as bread, juice, shampoo, haircut, etc. It is seen as the benchmark for inflation guide.'}",0:00:48.498983
+What is the Producer Price Index (PPI)?,{'answer': 'No answer'},0:00:54.333785
+What is gross domestic product (GDP)?,{'answer': 'Gross Domestic Product (GDP) is the total value of all goods and services produced within a country in one year.'},0:00:36.999436
+What is the difference between nominal GDP and real GDP?,"{'answer': ""Nominal GDP measures a country's economic output using current prices, while real GDP adjusts for inflation to reflect changes in purchasing power.""}",0:00:23.340771
+What is gross national product (GNP)?,{'answer': 'no answer'},0:00:35.725487
+What is the balance of payments?,{'answer': 'no answer'},0:00:25.714955
+What is the trade balance?,"{'answer': ""In a market economy, each trade involves at least one thing given up and one thing gotten, indicating that there isn't a specific term called 'trade balance'. However, it can be inferred from contexts provided that the concept of trade balance might relate to comparing what is gained versus what is given up in trades.""}",0:00:38.469425
+What is foreign direct investment (FDI)?,{'answer': 'no answer'},0:00:25.939991
+What is a portfolio investment?,"{'answer': 'A portfolio investment involves diversifying assets across various industries or markets, rather than concentrating on individual companies. It can include direct investments in critical materials and strategies designed to generate returns, provide consistent income, preserve wealth, and manage risk.'}",0:00:31.335099
+What is an exchange rate?,"{'answer': 'An exchange rate is the value of one currency for the purpose of conversion to another. It fluctuates based on macroeconomic factors and can be affected by inflation, as well as being determined through auction markets where buyers bid what they are willing to pay.'}",0:00:29.772448
+What is a fixed exchange rate?,{'answer': 'No answer'},0:00:17.799450
+What is a floating exchange rate?,"{'answer': 'A floating exchange rate involves currency values fluctuating based on market demand and supply, without direct government or central bank intervention.'}",0:00:19.520060
+What is a currency peg?,"{'answer': 'A currency peg refers to the practice of fixing an exchange rate between two currencies, often by tying it to another major currency or commodity like gold.'}",0:00:22.741253
+What is purchasing power parity (PPP)?,{'answer': 'no answer'},0:00:27.185520
+What is the International Monetary Fund (IMF)?,"{'answer': 'The International Monetary Fund (IMF) seeks to strengthen international financial markets using data from the World Bank and the IMF, based on ten indicators of economic freedom.'}",0:00:33.029806
+What is the World Bank?,"{'answer': ""The World Bank tracks similar statistics to those tracked by U.S. agencies like the Federal Reserve, Bureau of Labor Statistics, and National Bureau of Economic Research globally, serving as a benchmark for nations' economic health.""}",0:00:38.379319
+What is the difference between the IMF and the World Bank?,"{'answer': 'The International Monetary Fund (IMF) focuses on strengthening international financial markets, providing policy advice, and offering financial assistance to countries. The World Bank aims to reduce poverty by providing loans, grants, and technical expertise for development projects in developing countries. While both organizations track economic indicators like GDP and inflation, their primary roles differ.'}",0:00:32.308334
+What is quantitative easing (QE)?,{'answer': 'no answer'},0:00:38.337081
+What is the Federal Reserve?,"{'answer': 'The Federal Reserve System, or the Fed, is the central banking organization of the United States, responsible for regulating financial institutions and playing a significant role in the U.S. economy.'}",0:00:34.493892
+What is the European Central Bank (ECB)?,"{'answer': 'The European Central Bank (ECB) is an institution that defines and implements monetary policies in the euro zone, aiming to maintain price stability by keeping inflation rate closely under 2%. It has a capital stock owned by central banks of all EU member states using the euro as currency. The ECB also supervises financial institutions like J.P. Morgan Bank Luxembourg S.A.'}",0:00:40.881054
+What is the Bank of Japan (BOJ)?,{'answer': 'no answer'},0:00:38.382764
+What is the People's Bank of China (PBOC)?,{'answer': 'no answer'},0:00:49.421310
+What is the role of a central bank?,"{'answer': 'The main task of a central bank, such as the European Central Bank, is to define and implement monetary policies within its jurisdiction (e.g., maintaining price stability by keeping inflation rate closely under 2%). It also plays a significant role in regulating financial activities and may own capital stock from member countries.'}",0:00:41.389781
+What is monetary policy?,"{'answer': ""Monetary policy determines the amount of money in circulation and is generally carried out by a country's central bank, such as the RBI. By varying the Repo rate, it impacts the spending pattern of consumers.""}",0:00:36.641911
+What is fiscal policy?,"{'answer': 'Fiscal policy refers to the collective term for taxing and spending actions of governments, which can result in a deficit or budget surplus.'}",0:00:25.278342
+What is the difference between monetary policy and fiscal policy?,"{'answer': 'Monetary policy involves managing interest rates and money supply, typically by a central bank like RBI, while fiscal policy refers to government taxing and spending actions.'}",0:00:29.285641
+What is the discount rate?,{'answer': 'The context provided does not specify a single discount rate but discusses various aspects of discounts and their implications.'},0:00:33.229060
+What is the federal funds rate?,"{'answer': 'The Federal Reserve Funds rate, also known as the overnight rate, is the interest rate at which banks lend to each other.'}",0:00:25.979860
+What is an open market operation (OMO)?,{'answer': 'No answer'},0:00:32.911063
+What is the reserve requirement?,{'answer': 'The reserve requirement is the percentage of an investment’s value that must be paid for in cash.'},0:00:29.977608
+What is the liquidity ratio?,{'answer': 'No answer'},0:00:25.924672
+What is the capital adequacy ratio (CAR)?,{'answer': 'no answer'},0:00:25.639181
+What is the Basel III framework?,"{'answer': 'Basel III is a global regulatory standard for banks, developed by the Basel Committee on Banking Supervision, to strengthen bank capital requirements and introduce new regulatory standards on liquidity and leverage. It was introduced after the 2008 financial crisis.'}",0:00:52.154471
+What is a stress test in banking?,"{'answer': 'A stress test in banking evaluates how banks can handle financial and economic challenges, ensuring they have enough capital to cover potential losses.'}",0:01:00.674658
+What is systemic risk?,{'answer': 'No answer'},0:00:38.682917
+What is a financial contagion?,{'answer': 'no answer'},0:00:27.530150
+What is a liquidity trap?,{'answer': 'no answer'},0:00:33.329814
+What is the velocity of money?,{'answer': 'no answer'},0:00:55.527577
+What is the money multiplier?,{'answer': 'no answer'},0:00:23.217247
+What is a fiat currency?,"{'answer': 'A fiat currency is not explicitly mentioned in the provided documents. However, based on general knowledge, a fiat currency is a type of money that is declared legal tender by a government but is not backed by a physical commodity like gold or silver.'}",0:00:48.202029
+What is the gold standard?,{'answer': 'no answer'},0:00:32.609347
+What is cryptocurrency?,{'answer': 'no answer'},0:00:30.714933
+What is blockchain technology?,{'answer': 'no answer'},0:00:31.850352
+What is Bitcoin?,{'answer': 'no answer'},0:00:30.380430
+What is Ethereum?,{'answer': 'no answer'},0:00:29.778732
+What is a smart contract?,{'answer': 'no answer'},0:00:31.037670
+What is an initial coin offering (ICO)?,{'answer': 'no answer'},0:00:42.991021
+What is decentralized finance (DeFi)?,{'answer': 'no answer'},0:00:43.001610
+What is a stablecoin?,{'answer': 'no answer'},0:00:41.492917
+What is a central bank digital currency (CBDC)?,{'answer': 'No answer'},0:00:55.797707
+What is the difference between a cryptocurrency and a CBDC?,{'answer': 'no answer'},0:00:29.019205
+What is financial technology (FinTech)?,{'answer': 'no answer'},0:00:37.720564
+What is peer-to-peer (P2P) lending?,{'answer': 'No answer'},0:00:40.826704
+What is crowdfunding?,"{'answer': 'Crowdfunding originates from the practice of getting multiple people to invest, each recruiting more individuals.'}",0:00:37.896573
+What is robo-advising?,{'answer': 'no answer'},0:00:44.063356
+What is a payment gateway?,{'answer': 'no answer'},0:00:28.806895
+What is a digital wallet?,"{'answer': 'A digital wallet refers to an electronic device or online service that allows individuals to make electronic transactions, such as those involving debit or credit cards, through the internet. It often includes features like storing payment information and managing financial records.'}",0:00:43.839040
+What is a blockchain fork?,{'answer': 'no answer'},0:00:37.783231
+What is a public key and a private key?,{'answer': 'no answer'},0:00:46.215487
+What is tokenization?,{'answer': 'no answer'},0:00:25.808351
+What is a decentralized autonomous organization (DAO)?,{'answer': 'no answer'},0:00:34.452725
+What is yield farming in DeFi?,{'answer': 'no answer'},0:00:27.543253
+What is a non-fungible token (NFT)?,{'answer': 'no answer'},0:00:43.489144
+What is a hard fork?,{'answer': 'no answer'},0:00:22.399647
+What is a stock?,"{'answer': 'A stock represents a proportional share of ownership in a company, typically evidenced by a stock certificate that grants the owner certain rights. Stocks are traded on specialized marketplaces known as stock exchanges.'}",0:00:36.893304
+What are bonds?,"{'answer': 'In finance, a bond is a debt agreement that holds lender and borrower together in shared financial fate. Investors buy bonds to participate in economic growth as lenders, offering less risk compared to shareholders.'}",0:00:35.193874
+What is a mutual fund?,{'answer': 'A mutual fund is an investment portfolio consisting of securities that an individual investor can invest in all at once without having to buy each investment individually.'},0:00:33.364462
+What is an ETF?,"{'answer': 'An Exchange-Traded Fund (ETF) is a type of investment fund and exchange-traded product, structured like closed-end funds but traded on stock exchanges like individual securities. They can be bought or sold throughout the day at market prices, offer diversification within sectors or countries, and are based on indexes.'}",0:00:44.549196
+What is the difference between a stock and a bond?,"{'answer': 'Stocks represent ownership in a company and can be volatile, while bonds are loans to an organization that typically offer more stable returns.'}",0:00:31.194379
+What is the primary market?,"{'answer': 'The primary market is where companies sell stock for the first time to investors, and it is typically facilitated by an issuer who generally fixes the price.'}",0:00:30.048683
+What is the secondary market?,"{'answer': 'The secondary market refers to transactions between subsequent sellers and buyers after a company has gone public, where its stock becomes outstanding or publicly available for trading. It increases liquidity, lowers risk, and transaction costs.'}",0:00:33.367329
+What is a stock exchange?,"{'answer': 'A stock exchange is a specialized marketplace where shares of publicly traded companies are bought and sold, efficiently conducting millions of transactions each day.'}",0:00:36.273292
+What is a dividend?,{'answer': 'A dividend is the return on investment that comes as cash while you own the stock.'},0:00:30.298932
+What is a yield?,"{'answer': 'Yield refers to the rate of return on an investment such as a bond, expressed as an annual percentage of the amount invested. It can be measured in two ways: current yield and yield to maturity.'}",0:00:36.206902
+What is a mutual fund's NAV?,"{'answer': ""A mutual fund's Net Asset Value (NAV) is the price per share, calculated daily based on the closing prices of the securities within the fund. It represents the market value of each share as determined by the fund’s assets and liabilities and the number of shares that exist.""}",0:00:47.791120
+What is an IPO?,"{'answer': 'An IPO (Initial Public Offering) is issued when a company sells stocks to the public for the first time, allowing investors to purchase shares.'}",0:00:39.856028
+What is a bull market?,{'answer': 'no answer'},0:00:33.053846
+What is a bear market?,"{'answer': 'A bear market refers to a period when securities prices fall and widespread pessimism causes the negative sentiment to be self-sustaining, often leading investors to sell off their holdings. Inverse funds or bear funds are designed to increase in value during such periods.'}",0:00:30.730942
+What is market capitalization?,"{'answer': ""Market capitalization refers to the total value of a company's outstanding shares of stock, calculated by multiplying the current share price by the total number of shares.""}",0:00:31.438280
+What is the P/E ratio?,"{'answer': 'The Price-to-Earnings (P/E) ratio is calculated by dividing the price per share by the earnings per share, indicating how much investment is needed for every dollar of return that a stock creates.'}",0:00:44.870216
+What is the difference between technical and fundamental analysis?,"{'answer': ""Technical analysis involves analyzing securities based on their historical price patterns, often using charts of market data like price and volume. Fundamental analysis focuses on evaluating a security's intrinsic value by examining economic, industry, and company-specific information.""}",0:00:34.713735
+What is a hedge fund?,{'answer': 'no answer'},0:00:41.038375
+What is an index fund?,{'answer': 'An index fund is a mutual fund designed to replicate the performance of an asset class or selection of investments listed on an index.'},0:00:32.518052
+What is an option?,"{'answer': 'An option is a type of financial contract without obligation that gives the holder the right, but not the obligation, to buy or sell a specified financial asset at a pre-agreed price on or before a given date.'}",0:00:46.310776

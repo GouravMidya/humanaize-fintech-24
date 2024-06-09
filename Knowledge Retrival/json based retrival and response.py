@@ -22,7 +22,7 @@ parser = JsonOutputParser()
 prompt = PromptTemplate(
     template="""You are an assistant for question-answering tasks.
     Use the following pieces of retrieved context to answer the question
-    meaningfully. If you don't know the answer, just say that you don't know.
+    meaningfully. If you don't know the answer, just respond in json with 'no answer'.
     Use six sentences maximum and keep the answer concise
     {context}
     Question: {question}
@@ -56,10 +56,13 @@ with open('log.csv', 'a', newline='') as csvfile:
 import pandas as pd
 
 # Read the entire CSV file into a DataFrame
-df = pd.read_csv("FAQ.csv")
+df = pd.read_csv("FAQ2.csv")
 
 # Extract the first column (assuming it has a header)
-questions = df['Q']
+questions = df['Question']
+#%%
+print(questions)
+#%%
 
 # Print each value
 for question in questions:
