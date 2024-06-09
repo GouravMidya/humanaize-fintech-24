@@ -34,7 +34,7 @@ prompt = PromptTemplate(
 rag_chain = prompt | llm | parser
 
 #%%
-question = "what is debt consolidation?"
+question = "How do I balance saving and investing?"
 
 #%% Stream based output
 start_time = datetime.now()
