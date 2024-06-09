@@ -48,7 +48,7 @@ def make_with_pdf_new_vectordb():
     embedding = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
     persist_directory = 'chroma/'
     
-    splits = load_pdfs_in_folder(folder_path+"/dev/data/active/pdfs")
+    splits = load_pdfs_in_folder(folder_path+"/data/active/pdfs")
     print("Loading splits in a new vector db")
     vectordb = Chroma.from_documents(
         documents=splits,
@@ -56,7 +56,7 @@ def make_with_pdf_new_vectordb():
         persist_directory=persist_directory
     )
     print("Vector db created!")
-    move_files(folder_path+"/dev/data/active/pdfs/",folder_path+"/dev/data/archieve/pdfs/","pdf")
+    move_files(folder_path+"/data/active/pdfs/",folder_path+"/data/archieve/pdfs/","pdf")
     return vectordb
 
 def add_pdf_to_vectordb():
@@ -66,10 +66,10 @@ def add_pdf_to_vectordb():
     embedding = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
     persist_directory = 'chroma/'
     
-    splits = load_pdfs_in_folder(folder_path+"/dev/data/active/pdfs")
+    splits = load_pdfs_in_folder(folder_path+"/data/active/pdfs")
     print("Loading splits to the vector db")
     vectordb = Chroma(persist_directory=persist_directory, embedding_function=embedding)
     vectordb.add_documents(splits)
     print("New knowledge added to vector db!")
-    move_files(folder_path+"/dev/data/active/pdfs/",folder_path+"/dev/data/archieve/pdfs/","pdf")
+    move_files(folder_path+"/data/active/pdfs/",folder_path+"/data/archieve/pdfs/","pdf")
     return vectordb

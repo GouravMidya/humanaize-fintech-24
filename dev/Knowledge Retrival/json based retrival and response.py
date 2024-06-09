@@ -50,27 +50,3 @@ time_taken = end_time - start_time
 with open('log.csv', 'a', newline='') as csvfile:
     writer = csv.writer(csvfile)
     writer.writerow([question, response, time_taken])
-
-#%% Single output based
-
-import pandas as pd
-
-# Read the entire CSV file into a DataFrame
-df = pd.read_csv("FAQ2.csv")
-
-# Extract the first column (assuming it has a header)
-questions = df['Question']
-#%%
-print(questions)
-#%%
-
-# Print each value
-for question in questions:
-    start_time = datetime.now()
-    docs = retriever.invoke(question)
-    response = rag_chain.invoke({"context":docs,"question":question})
-    end_time = datetime.now()
-    time_taken = end_time - start_time
-    with open('log.csv', 'a', newline='') as csvfile:
-        writer = csv.writer(csvfile)
-        writer.writerow([question, response, time_taken])

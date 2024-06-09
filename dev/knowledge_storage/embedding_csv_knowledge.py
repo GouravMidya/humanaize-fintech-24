@@ -24,9 +24,9 @@ def load_csvs_in_folder(loading_folder_path):
             csv_path = os.path.join(loading_folder_path, filename)
             count += 1
             df = pd.read_csv(csv_path)
-            df['Response'] = df['Response'].str.lower()
+            df['response'] = df['response'].str.lower()
             df = df[df['Response'] != "{'answer': 'no answer'}"]
-            splits = [f"Question: {row['Query']} {row['Response']}" for _, row in df.iterrows()]
+            splits = [f"Question: {row['question']} {row['response']}" for _, row in df.iterrows()]
             all_splits.extend(splits)
     print(f"{count} csv files loaded!")
     return all_splits
@@ -41,13 +41,13 @@ def add_csv_to_vectordb():
     embedding = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
     persist_directory = 'chroma/'
     vectordb = Chroma(persist_directory=persist_directory, embedding_function=embedding)
-    splits = load_csvs_in_folder(folder_path+"/dev/data/active/csvs/logs/")
+    splits = load_csvs_in_folder(folder_path+"/data/active/csvs/logs/")
     vectordb.add_texts(
         texts=splits,
         metadatas=[{"source": "chat history"}] * len(splits),
         embedding=embedding
     )
     print("Csv files added to vector db!")
-    move_files(folder_path+"/dev/data/active/csvs/logs/",folder_path+"/dev/data/archieve/csvs/logs/","csv")
+    move_files(folder_path+"/data/active/csvs/logs/",folder_path+"/data/archieve/csvs/logs/","csv")
     return vectordb
 
