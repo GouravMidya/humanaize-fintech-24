@@ -27,9 +27,9 @@ app.add_middleware(
 )
 
 # Initialize necessary components
-local_llm = 'phi3'  # llama3
+local_llm = 'llama3'  # llama3
 embedding = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
-persist_directory = "C:/Users/goura/Documents/humanaize fintech 24/chroma/"
+persist_directory = "/Users/prathameshnaik/Desktop/humanaize-fintech-24/backend/chroma"
 vectordb = Chroma(persist_directory=persist_directory, embedding_function=embedding)
 retriever = vectordb.as_retriever(search_type="mmr")
 llm = ChatOllama(model=local_llm, format="json", temperature=0)
@@ -53,10 +53,12 @@ rag_chain = prompt | llm | parser
 
 class Query(BaseModel):
     query: str
+    sessionId: str
 
 @app.post("/api/query")
 async def get_response(query: Query):
     question = query.query
+    session_id = query.sessionId
     start_time = datetime.now()
     docs = retriever.invoke(question)
     generation = rag_chain.invoke({"context": docs, "question": question})
@@ -68,10 +70,8 @@ async def get_response(query: Query):
         writer = csv.writer(csvfile)
         writer.writerow([question, generation, time_taken])
 
-    return {"response": generation}
+    return {"response": generation, "sessionId": session_id}
 
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)
-    
-#uvicorn main:app --reload

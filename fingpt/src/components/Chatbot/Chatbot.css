@@ -11,6 +11,12 @@
     width: 20%;
     border-right: 1px solid #ddd;
     overflow-y: auto;
+    left: -300px; /* Initially position the sidebar outside the viewport */
+    transition: left 0.3s ease; /* Add transition effect with easing */
+}
+
+.chat-sidebar.open {
+    left: 0; /* Move the sidebar to the left to make it visible */
 }
 
 .chat-content {
