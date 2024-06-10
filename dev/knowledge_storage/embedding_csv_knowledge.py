@@ -25,7 +25,7 @@ def load_csvs_in_folder(loading_folder_path):
             count += 1
             df = pd.read_csv(csv_path)
             df['response'] = df['response'].str.lower()
-            df = df[df['Response'] != "{'answer': 'no answer'}"]
+            df = df[df['response'] != "{'answer': 'no answer'}"]
             splits = [f"Question: {row['question']} {row['response']}" for _, row in df.iterrows()]
             all_splits.extend(splits)
     print(f"{count} csv files loaded!")

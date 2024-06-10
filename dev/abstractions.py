@@ -8,3 +8,5 @@ vectordb = add_pdf_to_vectordb()
 #%%
 
 vectordb = add_csv_to_vectordb()
+
+# %%

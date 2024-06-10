@@ -7,11 +7,15 @@ from langchain_community.chat_models import ChatOllama
 from langchain.prompts import PromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.output_parsers import JsonOutputParser
+import os
+from dotenv import load_dotenv
 
+load_dotenv()
+folder_path = os.getenv("folder_path")
 # Initialize necessary components
 local_llm = 'phi3'  # llama3
 embedding = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
-persist_directory = "C:/Users/goura/Documents/humanaize fintech 24/chroma/"
+persist_directory = folder_path+"/chroma/"
 vectordb = Chroma(persist_directory=persist_directory, embedding_function=embedding)
 retriever = vectordb.as_retriever(search_type="mmr")
 llm = ChatOllama(model=local_llm, format="json", temperature=0)

@@ -34,7 +34,7 @@ def load_pdfs_in_folder(loading_folder_path):
             pdf_path = os.path.join(loading_folder_path, filename)
             #print(pdf_path)
             loaders.append(PyPDFLoader(pdf_path))
-    print(count+"Files found, Starting Loading..")
+    print(str(count) + " Files found, Starting Loading..")
     for loader in loaders:
         docs.extend(loader.load())
     splits = text_splitter.split_documents(docs)
@@ -73,3 +73,5 @@ def add_pdf_to_vectordb():
     print("New knowledge added to vector db!")
     move_files(folder_path+"/data/active/pdfs/",folder_path+"/data/archieve/pdfs/","pdf")
     return vectordb
+
+# %%
