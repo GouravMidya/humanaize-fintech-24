@@ -16,6 +16,12 @@ load_dotenv()
 folder_path = os.getenv("folder_path")
 
 #%%
+def extract_answer(response_string):
+    if response_string.startswith("{'answer':") and response_string.endswith("}"):
+        return response_string[12:-2]
+    else:
+        return "no answer"
+    
 def load_csvs_in_folder(loading_folder_path):
     all_splits = []
     count = 0
@@ -24,9 +30,9 @@ def load_csvs_in_folder(loading_folder_path):
             csv_path = os.path.join(loading_folder_path, filename)
             count += 1
             df = pd.read_csv(csv_path)
-            df['response'] = df['response'].str.lower()
-            df = df[df['response'] != "{'answer': 'no answer'}"]
-            splits = [f"Question: {row['question']} {row['response']}" for _, row in df.iterrows()]
+            df['response'] = df['response'].apply(extract_answer)
+            df = df[df['response'].str.lower() != "no answer"]
+            splits = [f"{row['question']} {row['response']}" for _, row in df.iterrows()]
             all_splits.extend(splits)
     print(f"{count} csv files loaded!")
     return all_splits
