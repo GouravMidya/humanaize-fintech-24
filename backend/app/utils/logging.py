@@ -3,8 +3,8 @@
 import csv
 from datetime import datetime
 import os
-
 from app.config import FOLDER_PATH
+from app.utils.vector_db import add_csv_to_vectordb  # Ensure the import path is correct
 
 def get_log_file_path():
     current_date = datetime.now().strftime("_%d_%m_%y")
@@ -26,3 +26,6 @@ def log_query(question, response, time_taken, session_id):
     with open(log_file_path, 'a', newline='') as csvfile:
         writer = csv.writer(csvfile)
         writer.writerow([question, response, time_taken, session_id])
+    
+    # After logging the query, add CSVs to vector database
+    add_csv_to_vectordb()
