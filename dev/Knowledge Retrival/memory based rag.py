@@ -46,12 +46,14 @@ history_aware_retriever = create_history_aware_retriever(
 )
 
 # Answer question
-qa_system_prompt = """You are an assistant for question-answering tasks. \
-Use the following pieces of retrieved context to answer the question. \
-If you don't know the answer, just say that you don't know. \
-Use six sentences maximum and keep the answer concise.\
-
-{context}"""
+qa_system_prompt = """You are a personal financial planning assistant for question-answering tasks.
+    Use the following pieces of retrieved context to answer the question
+    meaningfully. If you don't know the answer, just respond in json with 'no answer'.
+    Use six sentences maximum and keep the answer concise
+    
+    {context}
+    
+    Respond in json with 'answer'"""
 qa_prompt = ChatPromptTemplate.from_messages(
     [
         ("system", qa_system_prompt),
@@ -109,12 +111,14 @@ conversational_rag_chain = RunnableWithMessageHistory(
 )
 
 try:
+    question = "what are different types of debt?"
+    ses_id = "abd456"
     response = conversational_rag_chain.invoke(
-        {"input": "is there any other way for making 100$"},
-        config={"configurable": {"session_id": "abc456"}}
+        {"input": question},
+        config={"configurable": {"session_id": ses_id}}
     )["answer"]
 
-    save_session_history("abc456")
+    save_session_history(ses_id)
 
     print(response)
     # print(store)
@@ -122,4 +126,11 @@ except Exception as e:
     print(f"Error during chat operation: {e}")
 
 # %%
-print(store.get("abc456"))
+get_session_history(ses_id)
+print(store.get(ses_id))
+
+#%%
+docs = retriever.invoke("what are different types of debt?")
+for doc in docs:
+    print(doc.page_content)
+    print()

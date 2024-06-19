@@ -24,7 +24,7 @@ llm = ChatOllama(model=local_llm, format="json", temperature=0)
 parser = JsonOutputParser()
 
 prompt = PromptTemplate(
-    template="""You are an assistant for question-answering tasks.
+    template="""You are a personal financial planning assistant for question-answering tasks.
     Use the following pieces of retrieved context to answer the question
     meaningfully. If you don't know the answer, just respond in json with 'no answer'.
     Use six sentences maximum and keep the answer concise
