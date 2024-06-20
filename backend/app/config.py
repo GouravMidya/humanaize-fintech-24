@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 FOLDER_PATH = os.getenv("FOLDER_PATH")
-#MONGO_DB_URL = os.getenv("MONGO_DB_URL")
+MONGO_DB_URL = os.getenv("MONGO_DB_URL")
 
 ORIGINS = [
     "http://localhost:3000",  # React frontend
