@@ -1,13 +1,6 @@
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
-
-const financialInfoSchema = new mongoose.Schema({
-  monthlyIncome: String,
-  monthlyExpenses: String,
-  financialGoals: String,
-  riskTolerance: String,
-  age: Number,
-});
+import FinancialInfo from "./financialInfoModel.js";
 
 const userSchema = new mongoose.Schema({
   email: {
@@ -39,7 +32,10 @@ const userSchema = new mongoose.Schema({
       },
     },
   ],
-  financialInfo: financialInfoSchema,
+  financialInfo: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "FinancialInfo",
+  },
 });
 
 userSchema.pre("save", async function () {
