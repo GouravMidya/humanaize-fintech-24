@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import './Chatbot.css';
 import Message from '../Message/Message';
 import Sidebar from '../Sidebar/Sidebar';
-import { Box, TextField, IconButton } from '@mui/material';
+import { Box, TextField, IconButton,Paper,Container } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
 import MenuIcon from '@mui/icons-material/Menu';
 import { v4 as uuidv4 } from 'uuid';

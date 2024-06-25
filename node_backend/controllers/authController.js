@@ -79,7 +79,6 @@ export const getUserDetails = async (req, res) => {
 
     const decoded = jwt.verify(token, process.env.TOKEN_KEY);
     const userId = decoded.id;
-
     const user = await User.findById(userId);
 
     if (!user) {
@@ -87,7 +86,7 @@ export const getUserDetails = async (req, res) => {
     }
 
     // Send user details back to the client
-    res.status(200).json({ username: user.username }); // Adjust response as needed
+    res.status(200).json({ username: user.username, userId:userId }); // Adjust response as needed
   } catch (error) {
     console.error('Error fetching user details:', error);
     res.status(500).json({ message: 'Server error' });

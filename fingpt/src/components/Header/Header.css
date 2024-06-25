@@ -1,14 +1,11 @@
-.header {
-    background-color: #007bff;
-    color: white;
-}
 
 .header-title {
     flex-grow: 1;
     text-align: center;
-    font-family: 'Roboto, sans-serif';
+    /* Remove font-family to inherit from theme */
 }
 
 .profile-section {
     margin-left: auto;
+    /* No specific changes needed if it inherits colors */
 }

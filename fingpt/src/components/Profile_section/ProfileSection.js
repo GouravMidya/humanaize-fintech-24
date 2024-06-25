@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import {
     IconButton,
     Menu,
@@ -12,31 +12,54 @@ import {
     Button,
     Switch,
     FormControlLabel,
-    Typography
+    Typography,
+    useTheme
 } from '@mui/material';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import { useNavigate } from 'react-router-dom';
 import { logout } from '../../utils/authUtils';
 import { getUsername } from '../../services/authServices';
+import axios from 'axios';
+import { ColorModeContext } from '../../ThemeContext';
 
 const ProfileSection = () => {
     const [anchorEl, setAnchorEl] = useState(null);
     const [openDialog, setOpenDialog] = useState(false);
-    const [isDarkMode, setIsDarkMode] = useState(false);
     const [username, setUsername] = useState('');
+    const [userId, setUserId] = useState('');
+    const [financialInfo, setFinancialInfo] = useState({
+        monthlyIncome: '',
+        monthlyExpenses: '',
+        shortTermGoals: '',
+        longTermGoals: '',
+        riskTolerance: '',
+        age: ''
+    });
     const navigate = useNavigate();
+    const theme = useTheme();
+    const colorMode = useContext(ColorModeContext);
 
     useEffect(() => {
-      const fetchUsername = async () => {
+        const fetchUserDetails = async () => {
+            try {
+                const { username, userId } = await getUsername();
+                setUsername(username.charAt(0).toUpperCase() + username.slice(1));
+                setUserId(userId);
+            } catch (error) {
+                console.error('Error fetching user details:', error);
+            }
+        };
+        fetchUserDetails();
+    }, []);
+
+    const fetchFinancialInfo = async () => {
         try {
-            const username = await getUsername();
-            setUsername(username.charAt(0).toUpperCase() + username.slice(1));
+            const response = await axios.get(`http://localhost:8001/financeInfo/${userId}`);
+            setFinancialInfo(response.data);
         } catch (error) {
-            console.error('Error fetching username:', error);
+            console.error('Error fetching financial information:', error);
         }
     };
-    fetchUsername();
-}, []);
 
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
@@ -46,8 +69,9 @@ const ProfileSection = () => {
         setAnchorEl(null);
     };
 
-    const handleCustomizeClick = () => {
+    const handleCustomizeClick = async () => {
         handleClose();
+        await fetchFinancialInfo();
         setOpenDialog(true);
     };
 
@@ -55,13 +79,25 @@ const ProfileSection = () => {
         setOpenDialog(false);
     };
 
-    const handleSubmit = () => {
-        setOpenDialog(false);
+    const handleSubmit = async () => {
+        try {
+            await axios.put('http://localhost:8001/financeInfo', {
+                userId,
+                ...financialInfo
+            });
+            setOpenDialog(false);
+        } catch (error) {
+            console.error('Error submitting financial information:', error);
+        }
     };
 
-    const handleThemeChange = (event) => {
-        setIsDarkMode(event.target.checked);
-        // Implement the logic to change the theme here
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setFinancialInfo({ ...financialInfo, [name]: value });
+    };
+
+    const handleThemeChange = () => {
+        colorMode.toggleColorMode();
     };
 
     const handleLogout = () => {
@@ -90,11 +126,11 @@ const ProfileSection = () => {
             >
                 <Typography fontSize={'18px'} align='center'>{username}</Typography><hr></hr>
                 <MenuItem onClick={handleCustomizeClick}>Customize</MenuItem>
-                <MenuItem onClick={handleClose}>
+                <MenuItem>
                     <FormControlLabel
                         control={
                             <Switch
-                                checked={isDarkMode}
+                                checked={theme.palette.mode === 'dark'}
                                 onChange={handleThemeChange}
                                 color="primary"
                             />
@@ -108,16 +144,68 @@ const ProfileSection = () => {
                 <DialogTitle>Customize GPT</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
-                        What would you like ChatGPT to know about you to provide better responses?
+                        Update your financial information to personalize your experience.
                     </DialogContentText>
                     <TextField
                         autoFocus
                         margin="dense"
-                        id="name"
-                        label="Your Information"
+                        name="monthlyIncome"
+                        label="Monthly Income"
                         type="text"
                         fullWidth
                         variant="standard"
+                        value={financialInfo.monthlyIncome}
+                        onChange={handleInputChange}
+                    />
+                    <TextField
+                        margin="dense"
+                        name="monthlyExpenses"
+                        label="Monthly Expenses"
+                        type="text"
+                        fullWidth
+                        variant="standard"
+                        value={financialInfo.monthlyExpenses}
+                        onChange={handleInputChange}
+                    />
+                    <TextField
+                        margin="dense"
+                        name="shortTermGoals"
+                        label="Short-term Goals"
+                        type="text"
+                        fullWidth
+                        variant="standard"
+                        value={financialInfo.shortTermGoals}
+                        onChange={handleInputChange}
+                    />
+                    <TextField
+                        margin="dense"
+                        name="longTermGoals"
+                        label="Long-term Goals"
+                        type="text"
+                        fullWidth
+                        variant="standard"
+                        value={financialInfo.longTermGoals}
+                        onChange={handleInputChange}
+                    />
+                    <TextField
+                        margin="dense"
+                        name="riskTolerance"
+                        label="Risk Tolerance"
+                        type="text"
+                        fullWidth
+                        variant="standard"
+                        value={financialInfo.riskTolerance}
+                        onChange={handleInputChange}
+                    />
+                    <TextField
+                        margin="dense"
+                        name="age"
+                        label="Age"
+                        type="number"
+                        fullWidth
+                        variant="standard"
+                        value={financialInfo.age}
+                        onChange={handleInputChange}
                     />
                 </DialogContent>
                 <DialogActions>

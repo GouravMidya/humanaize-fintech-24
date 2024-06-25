@@ -3,16 +3,14 @@
 }
 
 .message.user .message-content {
-    background-color: #007bff;
-    color: white;
+    /* Remove background-color, color to inherit from theme */
     padding: 10px;
     border-radius: 10px;
     text-align: right;
 }
 
 .message.bot .message-content {
-    background-color: #f1f1f1;
-    color: black;
+    /* Remove background-color, color to inherit from theme */
     padding: 10px;
     border-radius: 10px;
     text-align: left;

@@ -11,17 +11,15 @@ const financialInfoSchema = new mongoose.Schema({
   monthlyExpenses: {
     type: String,
   },
-  financialGoals: {
-    shortTerm: {
-      type: String,
-    },
-    longTerm: {
-      type: String,
-    },
+  shortTermGoals:{
+    type: String,
+  },
+  longTermGoals:{
+    type:String,
   },
   riskTolerance: {
     type: String,
-    enum: ["low", "moderate", "high", "Low", "Moderate", "High"],
+    enum: ["low", "moderate", "high", "Low", "Moderate", "High",""],
   },
   age: {
     type: Number,
