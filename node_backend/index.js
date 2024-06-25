@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import mongoose from "mongoose";
 import cors from "cors";
 import authRoute from "./routes/authRoute.js";
+import financialinfoRoute from "./routes/financialinfoRoute.js";
 import cookieParser from "cookie-parser";
 
 dotenv.config();
@@ -17,6 +18,7 @@ app.use(express.json());
 app.use(cors());
 
 app.use("/", authRoute);
+app.use("/", financialinfoRoute);
 
 mongoose
   .connect(mongoURI)
