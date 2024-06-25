@@ -1,6 +1,14 @@
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
 
+const financialInfoSchema = new mongoose.Schema({
+  monthlyIncome: String,
+  monthlyExpenses: String,
+  financialGoals: String,
+  riskTolerance: String,
+  age: Number,
+});
+
 const userSchema = new mongoose.Schema({
   email: {
     type: String,
@@ -21,10 +29,17 @@ const userSchema = new mongoose.Schema({
   },
   chat_sessions: [
     {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "ChatSession",
+      chat_session_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "ChatSession",
+      },
+      chat_name: {
+        type: String,
+        required: true,
+      },
     },
   ],
+  financialInfo: financialInfoSchema,
 });
 
 userSchema.pre("save", async function () {
