@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     IconButton,
     Menu,
@@ -11,14 +11,32 @@ import {
     TextField,
     Button,
     Switch,
-    FormControlLabel
+    FormControlLabel,
+    Typography
 } from '@mui/material';
 import AccountCircle from '@mui/icons-material/AccountCircle';
+import { useNavigate } from 'react-router-dom';
+import { logout } from '../../utils/authUtils';
+import { getUsername } from '../../services/authServices';
 
 const ProfileSection = () => {
-    const [anchorEl, setAnchorEl] = React.useState(null);
-    const [openDialog, setOpenDialog] = React.useState(false);
+    const [anchorEl, setAnchorEl] = useState(null);
+    const [openDialog, setOpenDialog] = useState(false);
     const [isDarkMode, setIsDarkMode] = useState(false);
+    const [username, setUsername] = useState('');
+    const navigate = useNavigate();
+
+    useEffect(() => {
+      const fetchUsername = async () => {
+        try {
+            const username = await getUsername();
+            setUsername(username.charAt(0).toUpperCase() + username.slice(1));
+        } catch (error) {
+            console.error('Error fetching username:', error);
+        }
+    };
+    fetchUsername();
+}, []);
 
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
@@ -46,6 +64,12 @@ const ProfileSection = () => {
         // Implement the logic to change the theme here
     };
 
+    const handleLogout = () => {
+        logout();
+        navigate('/login');
+        window.location.reload();
+    };
+
     return (
         <div>
             <IconButton onClick={handleClick} color="inherit">
@@ -64,6 +88,7 @@ const ProfileSection = () => {
                     horizontal: 'right',
                 }}
             >
+                <Typography fontSize={'18px'} align='center'>{username}</Typography><hr></hr>
                 <MenuItem onClick={handleCustomizeClick}>Customize</MenuItem>
                 <MenuItem onClick={handleClose}>
                     <FormControlLabel
@@ -77,7 +102,7 @@ const ProfileSection = () => {
                         label="Dark Mode"
                     />
                 </MenuItem>
-                <MenuItem onClick={handleClose}>LogOut</MenuItem>
+                <MenuItem onClick={handleLogout}>LogOut</MenuItem>
             </Menu>
             <Dialog open={openDialog} onClose={handleDialogClose}>
                 <DialogTitle>Customize GPT</DialogTitle>
