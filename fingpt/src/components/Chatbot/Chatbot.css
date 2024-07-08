@@ -8,7 +8,6 @@
     overflow: hidden;
 }
 
-
 .chat-sidebar {
     width: 20%;
     border-right: 1px solid #ddd;
@@ -52,5 +51,17 @@
     height: 300px;
     opacity: 0.3;
     z-index: 0;
+}
+
+.button-question {
+    border: 1px dashed grey;
+    padding: 10px;
+    height: 5rem;
+    border-radius: 10px;
+    transition: background-color 0.3s ease, transform 1s ease;
+}
+
+.button-question:hover {
+    transform: translateY(-3px);
 }
 

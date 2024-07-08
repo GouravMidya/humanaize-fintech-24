@@ -1,19 +1,16 @@
 // src/ThemeContext.js
 import React, { createContext, useState, useMemo } from 'react';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
+import { color } from 'chart.js/helpers';
 
 export const ColorModeContext = createContext({ toggleColorMode: () => {} });
 
 export const ThemeContextProvider = ({ children }) => {
   const [mode, setMode] = useState('light');
-  const colorMode = useMemo(
-    () => ({
-      toggleColorMode: () => {
-        setMode((prevMode) => (prevMode === 'light' ? 'dark' : 'light'));
-      },
-    }),
-    [],
-  );
+
+  const toggleColorMode = () => {
+    setMode((prevMode) => (prevMode === 'light' ? 'dark' : 'light'));
+  };
 
   const theme = useMemo(
     () =>
@@ -22,52 +19,45 @@ export const ThemeContextProvider = ({ children }) => {
           mode,
           ...(mode === 'light'
             ? {
-                // Light mode
+                // Light mode palette
                 primary: {
                   main: '#1976d2',
                 },
-                secondary:{
-                    main:'#000000'
+                secondary: {
+                  main: '#000000',
                 },
                 background: {
                   default: '#ffffff',
                   paper: '#f5f5f5',
                   input: '#ffffff',
-                  box:'#ffffff',
-                  container:'#ffffff'
                 },
                 text: {
                   primary: '#000000',
-                  secondary: '#424242',
+                  secondary: '#444444',
                 },
-                Box:{
-                    primary:'#1976d2',
-                    secondary:'1976d2'
+                button:{
+                  text:'black'
                 }
               }
             : {
-                // Dark mode
+                // Dark mode palette
                 primary: {
                   main: '#90caf9',
                 },
-                secondary:{
-                    main:'#000000'
+                secondary: {
+                  main: '#000000',
                 },
                 background: {
                   default: '#000000',
                   paper: '#1c1c1c',
                   input: '#333333',
-                  box:'#000000',
-                  container:'#000000'
-                  
                 },
                 text: {
                   primary: '#ffffff',
                   secondary: '#b0bec5',
                 },
-                Box:{
-                    primary:'#ffffff',
-                    secondary:'#ffffff'
+                button:{
+                  color:'white'
                 }
               }),
         },
@@ -102,7 +92,7 @@ export const ThemeContextProvider = ({ children }) => {
   );
 
   return (
-    <ColorModeContext.Provider value={colorMode}>
+    <ColorModeContext.Provider value={{ toggleColorMode }}>
       <ThemeProvider theme={theme}>{children}</ThemeProvider>
     </ColorModeContext.Provider>
   );
