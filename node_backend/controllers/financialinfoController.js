@@ -24,11 +24,9 @@ export const addFinancialInfo = async (req, res) => {
 };
 
 
-
 export const getFinancialInfoByUserId = async (req, res) => {
   try {
-    const { userId } = req.params;
-
+    const { userId } = req.query; // Extract userId from query parameters
     const financialInfo = await FinancialInfo.findOne({ userId });
 
     if (!financialInfo) {
@@ -41,7 +39,6 @@ export const getFinancialInfoByUserId = async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 };
-
 
 
 export const updateFinancialInfo = async (req, res) => {

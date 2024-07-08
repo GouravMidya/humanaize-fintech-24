@@ -54,12 +54,17 @@ const ProfileSection = () => {
 
     const fetchFinancialInfo = async () => {
         try {
-            const response = await axios.get(`http://localhost:8001/financeInfo/${userId}`);
-            setFinancialInfo(response.data);
+          const response = await axios.get('http://localhost:8001/financeInfo', {
+            params: {
+              userId: userId
+            }
+          });
+          setFinancialInfo(response.data.financialInfo);
+          console.log(response.data);
         } catch (error) {
-            console.error('Error fetching financial information:', error);
+          console.error('Error fetching financial information:', error);
         }
-    };
+      };
 
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
