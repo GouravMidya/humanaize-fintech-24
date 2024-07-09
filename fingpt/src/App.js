@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-d
 import Home from './pages/Home';
 import Login from './pages/Login';
 import SignUp from './pages/Signup';
+import BudgetOptimizer from './pages/BudgetOptimizer';
 import { isAuthenticated } from './utils/authUtils';
 import { ThemeContextProvider } from './ThemeContext';
 import { CssBaseline } from '@mui/material';
@@ -35,6 +36,7 @@ function App() {
           <Route path="/login" element={isLoggedIn ? <Navigate to="/home" /> : <Login onLogin={handleLogin} />} />
           <Route path="/register" element={<SignUp onRegister={handleRegister} />} />
           <Route path="/home" element={isLoggedIn ? <Home /> : <Navigate to="/login" />} />
+          <Route path="/budget" element= {<BudgetOptimizer />}></Route>
         </Routes>
       </Router>
     </ThemeContextProvider>
