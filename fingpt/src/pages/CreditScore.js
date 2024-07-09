@@ -27,7 +27,7 @@ import {
 } from '@mui/icons-material';
 import { PieChart, LineChart } from '@mui/x-charts';
 
-
+import WealthWizard from '../components/WealthWizard';
 const theme = createTheme({
   palette: {
     primary: {
@@ -385,6 +385,7 @@ function CreditScore() {
           </Typography>
         </Box>
       </Container>
+      <WealthWizard />
     </ThemeProvider>
   );
 }
