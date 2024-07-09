@@ -1,11 +1,10 @@
 # app/main.py
-# The main entry point of the application, where the FastAPI app instance is created and configured.
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from .config import ORIGINS
 from .routers.query import router as query_router
-#from .dependencies.database import connect_to_mongo, close_mongo_connection
+from .routers.budget import router as budget_router
 
 app = FastAPI()
 
@@ -20,10 +19,8 @@ app.add_middleware(
 
 # Include routers
 app.include_router(query_router)
+app.include_router(budget_router, prefix="/budget", tags=["budget"])
 
-# Startup and shutdown events for MongoDB
-#app.add_event_handler("startup", connect_to_mongo)
-#app.add_event_handler("shutdown", close_mongo_connection)
 
 if __name__ == "__main__":
     import uvicorn

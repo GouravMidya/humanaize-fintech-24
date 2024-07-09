@@ -1,14 +1,9 @@
+# app/services/budget_optimizer.py
 import json
-import os
 from datetime import datetime
-from dotenv import load_dotenv
 from langchain_community.chat_models import ChatOllama
 from langchain.prompts import PromptTemplate
 from langchain_core.output_parsers import JsonOutputParser
-
-# Load environment variables
-load_dotenv()
-folder_path = os.getenv("folder_path")
 
 # Initialize ChatOllama
 local_llm = 'llama3'  # or 'llama3', depending on your setup
@@ -57,27 +52,10 @@ def optimize_budget(income, expenses):
     end_time = datetime.now()
     time_taken = end_time - start_time
 
-    # Log the query, answer, and time taken (you can modify this to use CSV if preferred)
-    with open('budget_optimization_log.txt', 'a') as logfile:
+    # Log the query, answer, and time taken
+    '''with open('budget_optimization_log.txt', 'a') as logfile:
         logfile.write(f"Input: {json.dumps(input_data)}\n")
         logfile.write(f"Output: {json.dumps(result)}\n")
-        logfile.write(f"Time taken: {time_taken}\n\n")
+        logfile.write(f"Time taken: {time_taken}\n\n")'''
 
     return result
-
-# Example usage
-if __name__ == "__main__":
-    income = 5000000
-    expenses = {
-        "Housing": 15,
-        "Food": 15,
-        "Transportation": 10,
-        "Utilities": 10,
-        "Entertainment": 10,
-        "Savings": 20,
-        "Loans": 10,
-        "Surplus": 10
-    }
-    
-    result = optimize_budget(income, expenses)
-    print(json.dumps(result, indent=2))

@@ -3,3 +3,4 @@
 /data
 /chroma
 .env
+/backend/app/__pycache__
