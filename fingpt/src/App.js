@@ -4,6 +4,7 @@ import Home from './pages/Home';
 import Login from './pages/Login';
 import SignUp from './pages/Signup';
 import BudgetOptimizer from './pages/BudgetOptimizer';
+import LandingPage from './pages/LandingPage';
 import { isAuthenticated } from './utils/authUtils';
 import { ThemeContextProvider } from './ThemeContext';
 import { CssBaseline } from '@mui/material';
@@ -32,7 +33,7 @@ function App() {
       <CssBaseline />
       <Router>
         <Routes>
-          <Route path="/" element={isLoggedIn ? <Navigate to="/home" /> : <Navigate to="/login" />} />
+          <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={isLoggedIn ? <Navigate to="/home" /> : <Login onLogin={handleLogin} />} />
           <Route path="/register" element={<SignUp onRegister={handleRegister} />} />
           <Route path="/home" element={isLoggedIn ? <Home /> : <Navigate to="/login" />} />
