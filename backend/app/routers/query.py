@@ -6,7 +6,7 @@ from datetime import datetime
 from app.models.query import Query
 from app.utils.logging import log_query
 # from app.utils.setup import setup_components
-from app.utils.memory_based_setup import setup_mem_components
+from app.utils.memory_based_setup import setup_mem_components,save_session_history
 
 router = APIRouter()
 
@@ -25,6 +25,7 @@ async def get_response(query: Query):
         config={"configurable": {"session_id": session_id}}
     )["answer"]
     print(response)
+    save_session_history(session_id)
     end_time = datetime.now()
     time_taken = end_time - start_time
     log_query(question, response, time_taken, session_id)
