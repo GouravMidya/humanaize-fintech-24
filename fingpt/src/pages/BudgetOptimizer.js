@@ -85,14 +85,9 @@ const BudgetOptimizer = () => {
   };
 
   const optimizeBudget = async () => {
-    if (totalExpensePercentage !== 100) {
-      alert('Total expenses must equal 100% before optimizing.');
-      return;
-    }
-
     setIsLoading(true);
     try {
-      const response = await axios.post('/budget/optimize', {
+      const response = await axios.post(`${process.env.REACT_APP_FASTURL}/budget/optimize`, {
         income: totalIncome,
         expenses: expenses,
       });
@@ -231,7 +226,7 @@ const BudgetOptimizer = () => {
         Budget Creation and Optimization
       </Typography>
       <Grid container spacing={3}>
-        <Grid item xs={12} md={6}>
+        {!optimizedBudget && (<Grid item xs={12} md={6}>
           <Paper elevation={3} sx={{ p: 2 }}>
             <Typography variant="h6" gutterBottom>
               Income
@@ -284,7 +279,7 @@ const BudgetOptimizer = () => {
               Add Expense Category
             </Button>
           </Paper>
-        </Grid>
+        </Grid>)}
         <Grid item xs={12} md={6}>
           <BudgetSummary title="Current Budget Summary" expenses={expenses} totalIncome={totalIncome} />
         </Grid>
@@ -295,9 +290,15 @@ const BudgetOptimizer = () => {
         )}
       </Grid>
       <Box sx={{ mt: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Button variant="contained" color="primary" onClick={optimizeBudget} disabled={isLoading}>
+        {!optimizedBudget && (<Button 
+          variant="contained" 
+          color="primary" 
+          onClick={optimizeBudget} 
+          disabled={isLoading}
+          size="large"
+          sx={{ fontSize: '1.2rem', padding: '10px 20px' }}>
           {isLoading ? <CircularProgress size={24} /> : 'Optimize Budget'}
-        </Button>
+        </Button>)}
         {optimizedBudget && (
           <Box>
             <Button startIcon={<FileDownloadIcon />} onClick={() => exportData('xlsx')} sx={{ mr: 1 }}>
@@ -310,18 +311,20 @@ const BudgetOptimizer = () => {
         )}
       </Box>
       {suggestions.length > 0 && (
-        <Paper elevation={3} sx={{ mt: 2, p: 2 }}>
-          <Typography variant="h6" gutterBottom>
+        <>
+          <Typography variant="h6" gutterBottom align="center" sx={{ mt: 4, mb: 2 }}>
             AI Suggestions
           </Typography>
-          <List>
+          <Grid container spacing={2}>
             {suggestions.map((suggestion, index) => (
-              <ListItem key={index}>
-                <ListItemText primary={suggestion} />
-              </ListItem>
+              <Grid item xs={12} sm={6} md={4} key={index}>
+                <Paper elevation={2} sx={{ p: 2, height: '100%', bgcolor: '#f0f4f8', borderLeft: '4px solid #1976d2' }}>
+                  <Typography variant="body1">{suggestion}</Typography>
+                </Paper>
+              </Grid>
             ))}
-          </List>
-        </Paper>
+          </Grid>
+        </>
       )}
     </Box>
   );
