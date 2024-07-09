@@ -380,7 +380,7 @@ function CreditScore() {
 
         <Box mt={4}>
           <Typography variant="body2" color="textSecondary" align="center">
-            Disclaimer: This tool provides estimates and general information. 
+            Disclaimer: This tool provides estimates and general information. <br></br>
             For accurate credit scores and personalized advice, consult with financial professionals.
           </Typography>
         </Box>

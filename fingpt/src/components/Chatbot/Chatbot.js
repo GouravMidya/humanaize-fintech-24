@@ -9,7 +9,7 @@ import { v4 as uuidv4 } from 'uuid';
 import favicon from '../Chatbot/favicon.ico'; // Adjust the path as necessary
 import handleSend from '../../services/handleSend'; // Import the handleSend function
 
-const Chatbot = () => {
+const Chatbot = ({ initialMessage }) => {
     const [conversations, setConversations] = useState([{ id: uuidv4(), messages: [], name: '' }]);
     const [currentConversationId, setCurrentConversationId] = useState(conversations[0].id);
     const [input, setInput] = useState('');
@@ -39,6 +39,12 @@ const Chatbot = () => {
         "How can I generate passive income?",
         "What is estate planning and why is it important?"
     ], []);
+
+    useEffect(() => {
+        if (initialMessage) {
+          onSend(initialMessage);
+        }
+      }, []);
 
     const getRandomQuestions = useCallback(() => {
         const shuffled = questions.sort(() => 0.5 - Math.random());

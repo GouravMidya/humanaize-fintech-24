@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Fab, Dialog, DialogTitle, DialogContent, DialogActions, Button, Typography } from '@mui/material';
+import { Fab } from '@mui/material';
 import ChatIcon from '@mui/icons-material/Chat';
 
 const WealthWizard = () => {
@@ -19,8 +19,11 @@ const WealthWizard = () => {
   };
 
   return (
-    <>
-      <Link to="/home" style={{ textDecoration: 'none' }}>
+      <Link 
+        to="/home" 
+        state={{ initialMessage: "How to improve my credit score" }}
+        style={{ textDecoration: 'none' }}
+      >
         <Fab
           color="primary"
           variant="extended"
@@ -34,40 +37,10 @@ const WealthWizard = () => {
           }}
         >
           <ChatIcon sx={{ mr: 1 }} />
-          Talk to WealthWizardAI
+          Talk to WealthWizard
         </Fab>
       </Link>
 
-      <Dialog
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-        sx={{
-          position: 'fixed',
-          bottom: 80,
-          right: 16,
-          '& .MuiDialog-paper': {
-            margin: 0,
-            maxWidth: 'none',
-          },
-        }}
-      >
-        <DialogTitle id="alert-dialog-title">
-          {"Still have questions?"}
-        </DialogTitle>
-        <DialogContent>
-          <Typography>
-            Click the button to talk to WealthWizardAI for more assistance.
-          </Typography>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose} color="primary" autoFocus>
-            Got it
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </>
   );
 };
 
