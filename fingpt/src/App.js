@@ -7,7 +7,7 @@ import BudgetOptimizer from './pages/BudgetOptimizer';
 import { isAuthenticated } from './utils/authUtils';
 import { ThemeContextProvider } from './ThemeContext';
 import { CssBaseline } from '@mui/material';
-
+import CreditScore from './pages/CreditScore';
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
@@ -37,6 +37,7 @@ function App() {
           <Route path="/register" element={<SignUp onRegister={handleRegister} />} />
           <Route path="/home" element={isLoggedIn ? <Home /> : <Navigate to="/login" />} />
           <Route path="/budget" element= {<BudgetOptimizer />}></Route>
+          <Route path="/creditscore" element={<CreditScore />}></Route>
         </Routes>
       </Router>
     </ThemeContextProvider>
