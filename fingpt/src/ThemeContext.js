@@ -1,7 +1,6 @@
 // src/ThemeContext.js
 import React, { createContext, useState, useMemo } from 'react';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
-import { color } from 'chart.js/helpers';
 
 export const ColorModeContext = createContext({ toggleColorMode: () => {} });
 

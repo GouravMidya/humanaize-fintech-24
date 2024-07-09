@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import './Chatbot.css';
 import Message from '../Message/Message';
 import Sidebar from '../Sidebar/Sidebar';
@@ -16,8 +16,9 @@ const Chatbot = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [isSending, setIsSending] = useState({}); // State to manage if a message is being sent per conversation
     const [showQuestions, setShowQuestions] = useState(true); // State to manage the visibility of questions
+    const [randomQuestions, setRandomQuestions] = useState([]); // State to store the randomized questions
 
-    const questions = [
+    const questions = useMemo(() => [
         "What are some effective saving strategies?",
         "How can I improve my overall financial health?",
         "How can I build an emergency fund quickly?",
@@ -37,12 +38,16 @@ const Chatbot = () => {
         "What are some common financial mistakes to avoid?",
         "How can I generate passive income?",
         "What is estate planning and why is it important?"
-    ];
+    ], []);
 
-    const getRandomQuestions = () => {
+    const getRandomQuestions = useCallback(() => {
         const shuffled = questions.sort(() => 0.5 - Math.random());
         return shuffled.slice(0, 4);
-    };
+    }, [questions]);
+
+    useEffect(() => {
+        setRandomQuestions(getRandomQuestions());
+    }, [getRandomQuestions]);
 
     const onSend = async (message) => {
         await handleSend(message || input, currentConversationId, setConversations, setIsSending, setInput); // Pass setInput
@@ -55,6 +60,7 @@ const Chatbot = () => {
         setCurrentConversationId(newId);
         setIsSending(prev => ({ ...prev, [newId]: false }));
         setShowQuestions(true); // Show questions for the new conversation
+        setRandomQuestions(getRandomQuestions()); // Update questions for the new conversation
     };
 
     const handleConversationClick = (id) => {
@@ -91,9 +97,9 @@ const Chatbot = () => {
         onSend(question); // Send the question as a message automatically
     };
 
-    const currentMessages = conversations.find(
-        (conv) => conv.id === currentConversationId
-    )?.messages || [];
+    const currentMessages = useMemo(() => {
+        return conversations.find((conv) => conv.id === currentConversationId)?.messages || [];
+    }, [conversations, currentConversationId]);
 
     useEffect(() => {
         setShowQuestions(currentMessages.length === 0); // Show questions if no messages in the current conversation
@@ -132,7 +138,7 @@ const Chatbot = () => {
                         spacing={2} 
                         style={{ padding:'2rem' }}
                     >
-                        {getRandomQuestions().map((question, index) => (
+                        {randomQuestions.map((question, index) => (
                             <Grid item xs={12} sm={6} key={index} >
                                 <Button className="button-question"variant="contained" style={{ 
                                     border: '1px dashed #303030', 
@@ -151,6 +157,7 @@ const Chatbot = () => {
                 {currentConversationId && (
                     <Box className="chat-input" display="flex" alignItems="center" p={1} borderTop={1} borderColor="divider">
                         <TextField
+                            style={{padding:'0.5rem'}}
                             fullWidth
                             variant="outlined"
                             placeholder="Type your message..."

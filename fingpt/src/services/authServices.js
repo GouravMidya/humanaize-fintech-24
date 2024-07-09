@@ -2,7 +2,7 @@ import axios from 'axios';
 
 const signUp = async (formData) => {
   try {
-    const response = await axios.post(`http://localhost:8001/signup`, formData);
+    const response = await axios.post(`${process.env.REACT_APP_NODEURL}/signup`, formData);
     return response.data;
   } catch (err) {
     throw err;
@@ -11,7 +11,7 @@ const signUp = async (formData) => {
 
 const login = async (formData) => {
   try {
-    const response = await axios.post(`http://localhost:8001/login`, formData);
+    const response = await axios.post(`${process.env.REACT_APP_NODEURL}/login`, formData);
     return response.data;
   } catch (err) {
     throw err;
@@ -20,7 +20,7 @@ const login = async (formData) => {
 
 export const checkEmail = async (email) => {
   try {
-    const response = await axios.post(`http://localhost:8001/check-email`, { email });
+    const response = await axios.post(`${process.env.REACT_APP_NODEURL}/check-email`, { email });
     return response.data;
   } catch (err) {
     throw err;
@@ -34,12 +34,11 @@ export const getUsername = async () => {
       throw new Error('No token available');
     }
 
-    const response = await axios.get('http://localhost:8001/user-details', {
+    const response = await axios.get(`${process.env.REACT_APP_NODEURL}/user-details`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
-    console.log(response.data);
     return response.data;
   } catch (error) {
     throw error;

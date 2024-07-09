@@ -49,7 +49,7 @@ const SignUp = ({ onRegister }) => {
 
   const handleFinancialSubmit = async () => {
     try {
-      await axios.post('http://localhost:8001/financeInfo', financialInfo);
+      await axios.post(`${process.env.REACT_APP_NODEURL}/financeInfo`, financialInfo);
       setOpenFinancialDialog(false);
       navigate('/home');
     } catch (error) {

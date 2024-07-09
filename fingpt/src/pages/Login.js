@@ -21,7 +21,7 @@ const Login = ({ onLogin }) => {
     setIsLoading(true);
 
     try {
-      const { token, user } = await login(formData);
+      const { token } = await login(formData);
       localStorage.setItem('jwt', token);
       onLogin(); // Notify the App component that the user is logged in
       navigate('/home');

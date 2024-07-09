@@ -26,7 +26,7 @@ const handleSend = async (input, currentConversationId, setConversations, setIsS
 
         // Send user input to the backend API
         try {
-            const response = await axios.post('http://localhost:8000/api/query', { query: input, sessionId: currentConversationId });
+            const response = await axios.post(`${process.env.REACT_APP_FASTURL}/api/query`, { query: input, sessionId: currentConversationId });
             const capitalizedBotResponse = capitalizeFirstLetter(response.data.response);
             const botMessage = { sender: 'bot', text: capitalizedBotResponse, sessionId: response.data.sessionId };
             setConversations((prevConversations) =>

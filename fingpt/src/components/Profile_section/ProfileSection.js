@@ -54,7 +54,7 @@ const ProfileSection = () => {
 
     const fetchFinancialInfo = async () => {
         try {
-          const response = await axios.get('http://localhost:8001/financeInfo', {
+          const response = await axios.get(`${process.env.REACT_APP_NODEURL}/financeInfo`, {
             params: {
               userId: userId
             }
@@ -86,7 +86,7 @@ const ProfileSection = () => {
 
     const handleSubmit = async () => {
         try {
-            await axios.put('http://localhost:8001/financeInfo', {
+            await axios.put(`${process.env.REACT_APP_NODEURL}/financeInfo`, {
                 userId,
                 ...financialInfo
             });
