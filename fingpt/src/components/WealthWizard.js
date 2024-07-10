@@ -1,46 +1,88 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
-import { Fab } from '@mui/material';
-import ChatIcon from '@mui/icons-material/Chat';
+import { Fab, Tooltip } from '@mui/material';
+import { styled } from '@mui/material/styles';
 
-const WealthWizard = () => {
-  const [open, setOpen] = useState(false);
+const LargeTooltip = styled(({ className, ...props }) => (
+  <Tooltip {...props} classes={{ popper: className }} />
+))(({ theme }) => ({
+  '& .MuiTooltip-tooltip': {
+    fontSize: 16,
+    padding: '8px 16px',
+    maxWidth: 'none',
+    textAlign: 'center',
+  },
+  '& .MuiTooltip-arrow': {
+    '&::before': {
+      backgroundColor: theme.palette.common.white,
+      border: `1px solid ${theme.palette.grey[300]}`,
+    },
+    right: 12,
+    '&::before': {
+      transformOrigin: '100% 100%',
+    },
+  },
+}));
 
-  const handleMouseEnter = () => {
-    setOpen(true);
-  };
+const ButtonContainer = styled('div')({
+  position: 'fixed',
+  bottom: 26,
+  right: 26,
+  zIndex: 'tooltip',
+});
 
-  const handleMouseLeave = () => {
-    setOpen(false);
-  };
+const IconImage = styled('img')({
+  width: 45,
+  height: 45,
+});
 
-  const handleClose = () => {
-    setOpen(false);
-  };
-
+const WealthWizard = ({ initialMessage }) => {
   return (
-      <Link 
-        to="/home" 
-        state={{ initialMessage: "How to improve my credit score" }}
-        style={{ textDecoration: 'none' }}
+    <ButtonContainer>
+      <LargeTooltip 
+        title={
+          <React.Fragment>
+            Have more queries?<br />
+            Talk to WealthWizard
+          </React.Fragment>
+        }
+        arrow 
+        placement="top"
+        enterDelay={500}
+        leaveDelay={200}
+        PopperProps={{
+          modifiers: [
+            {
+              name: 'offset',
+              options: {
+                offset: [-70, 5],
+              },
+            },
+          ],
+        }}
       >
-        <Fab
-          color="primary"
-          variant="extended"
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}
-          sx={{
-            position: 'fixed',
-            bottom: 16,
-            right: 16,
-            zIndex: 'tooltip',
-          }}
+        <Link
+          to="/home"
+          state={{ initialMessage: initialMessage }}
+          style={{ textDecoration: 'none' }}
         >
-          <ChatIcon sx={{ mr: 1 }} />
-          Talk to WealthWizard
-        </Fab>
-      </Link>
-
+          <Fab
+            color="primary"
+            size="large"
+            sx={{
+              width: 64,
+              height: 64,
+              '& .MuiFab-root': {
+                width: '100%',
+                height: '100%',
+              },
+            }}
+          >
+            <IconImage src="wizardIcon.png" alt="WealthWizard" />
+          </Fab>
+        </Link>
+      </LargeTooltip>
+    </ButtonContainer>
   );
 };
 

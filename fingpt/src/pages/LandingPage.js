@@ -14,6 +14,7 @@ import heroImage from './../assets/hero_image_3.jpg';  // Make sure this path is
 import featureImage from './../assets/support0.jpeg';
 import featureImage1 from './../assets/support1.jpeg';
 import featureImage2 from './../assets/support2.png';
+import WealthWizard from '../components/WealthWizard';
 
 const FullScreenHero = styled(Box)(({ theme }) => ({
   backgroundImage: `url(${heroImage})`,
@@ -123,7 +124,7 @@ const LandingPage = () => {
             </Grid>
           </React.Fragment>
         ))}
-
+        <br/>
         <Footer>
           <Container>
             <Typography variant="h6" gutterBottom>WealthWizard</Typography>
@@ -133,6 +134,7 @@ const LandingPage = () => {
           </Container>
         </Footer>
       </MainContent>
+      <WealthWizard initialMessage="What is personal financial planning?"/>
     </>
   );
 };

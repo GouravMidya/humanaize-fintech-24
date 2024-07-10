@@ -385,7 +385,7 @@ function CreditScore() {
           </Typography>
         </Box>
       </Container>
-      <WealthWizard />
+      <WealthWizard initialMessage="How to improve my credit score?"/>
     </ThemeProvider>
   );
 }

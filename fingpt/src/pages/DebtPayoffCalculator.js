@@ -24,6 +24,7 @@ import {
   Legend,
   Tooltip,
 } from "recharts";
+import WealthWizard from "../components/WealthWizard";
 
 const DebtPayoffCalculator = () => {
   const [debts, setDebts] = useState([
@@ -259,6 +260,7 @@ const DebtPayoffCalculator = () => {
           </Paper>
         </>
       )}
+      <WealthWizard initialMessage={"How to pay off debt quickly?"}/>
     </Container>
   );
 };

@@ -24,7 +24,7 @@ import { PieChart } from '@mui/x-charts/PieChart';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import * as XLSX from 'xlsx';
 import { jsPDF } from "jspdf";
-
+import WealthWizard from '../components/WealthWizard';
 // Custom color palette
 const customColors = [
     '#1f77b4', '#ff7f0e', '#48cae4', '#d62728', '#8338ec', 
@@ -326,6 +326,7 @@ const BudgetOptimizer = () => {
           </Grid>
         </>
       )}
+      <WealthWizard initialMessage="How to optimize my budget?"/>
     </Box>
   );
 };

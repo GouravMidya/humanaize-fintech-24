@@ -10,6 +10,8 @@ import { isAuthenticated } from './utils/authUtils';
 import { ThemeContextProvider } from './ThemeContext';
 import { CssBaseline } from '@mui/material';
 import CreditScore from './pages/CreditScore';
+import ExpenseTracker from './pages/ExpenseTracker';
+
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
@@ -41,6 +43,7 @@ function App() {
           <Route path="/budget" element= {<BudgetOptimizer />}></Route>
           <Route path="/creditscore" element={<CreditScore />}></Route>
           <Route path="/debt" element={<DebtPayoffCalculator />}/>
+          <Route path="/expensetracker" element={<ExpenseTracker/>}></Route>
         </Routes>
       </Router>
     </ThemeContextProvider>
