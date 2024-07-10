@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-d
 import Home from './pages/Home';
 import Login from './pages/Login';
 import SignUp from './pages/Signup';
+import DebtPayoffCalculator from "./pages/DebtPayoffCalculator";
 import BudgetOptimizer from './pages/BudgetOptimizer';
 import LandingPage from './pages/LandingPage';
 import { isAuthenticated } from './utils/authUtils';
@@ -39,6 +40,7 @@ function App() {
           <Route path="/home" element={isLoggedIn ? <Home /> : <Navigate to="/login" />} />
           <Route path="/budget" element= {<BudgetOptimizer />}></Route>
           <Route path="/creditscore" element={<CreditScore />}></Route>
+          <Route path="/debt" element={<DebtPayoffCalculator />}/>
         </Routes>
       </Router>
     </ThemeContextProvider>
