@@ -1,116 +1,139 @@
 import React from 'react';
-import { Box, Typography, Button, AppBar, Toolbar, Grid, Link } from '@mui/material';
+import { 
+  AppBar, 
+  Toolbar, 
+  Typography, 
+  Button, 
+  Container, 
+  Grid, 
+  Box
+} from '@mui/material';
+import { styled } from '@mui/system';
+import { Link } from 'react-router-dom';
 import heroImage from './../assets/hero_image_3.jpg';  // Make sure this path is correct
-import featureImage from '../assets/support1.jpeg';
+import featureImage from './../assets/support0.jpeg';
+import featureImage1 from './../assets/support1.jpeg';
+import featureImage2 from './../assets/support2.png';
+
+const FullScreenHero = styled(Box)(({ theme }) => ({
+  backgroundImage: `url(${heroImage})`,
+  backgroundSize: 'cover',
+  backgroundPosition: 'center',
+  height: '100vh',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  color: theme.palette.common.white,
+}));
+
+const WhiteSection = styled(Box)(({ theme }) => ({
+  backgroundColor: theme.palette.background.paper,
+  padding: theme.spacing(8, 0),
+}));
+
+const ImageSection = styled(Box)(({ theme, image }) => ({
+  backgroundImage: `url("${image}")`,
+  backgroundSize: 'cover',
+  backgroundPosition: 'center',
+  minHeight: 400,
+}));
+
+const Footer = styled(Box)(({ theme }) => ({
+  backgroundColor: theme.palette.primary.main,
+  color: theme.palette.primary.contrastText,
+  padding: theme.spacing(6),
+}));
+
+const MainContent = styled(Box)(({ theme }) => ({
+  paddingTop: theme.mixins.toolbar.minHeight, // Add padding to account for the fixed AppBar
+}));
 
 const LandingPage = () => {
-  return (
-    <Box>
-      <Box
-        sx={{
-          height: '100vh',
-          position: 'relative',
-          '&::before': {
-            content: '""',
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            backgroundImage: `url(${heroImage})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            opacity: 0.7,  // Adjust this value to change opacity (0.0 to 1.0)
-          },
-        }}
-      >
-        <AppBar position="static" color="transparent" elevation={0}>
-          <Toolbar>
-            <Typography
-              variant="h6"
-              component="div"
-              sx={{ flexGrow: 1, cursor: 'pointer', position: 'relative', zIndex: 1 }}
-            >
-              FinancePro
-            </Typography>
-            <Button color="inherit" sx={{ position: 'relative', zIndex: 1 }}>Login</Button>
-          </Toolbar>
-        </AppBar>
-        <Box
-          sx={{
-            position: 'relative',
-            height: '100%',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
-          <Typography
-            variant="h2"
-            align="center"
-            sx={{
-              color: 'white',
-              textShadow: '2px 2px 4px rgba(0,0,0,0.5)',
-              maxWidth: '80%',
-              zIndex: 1,
-            }}
-          >
-            Take Control of Your Financial Future Today
-          </Typography>
-        </Box>
-      </Box>
-      <Box
-        sx={{
-          backgroundColor: 'white',
-          padding: '40px',
-          textAlign: 'center',
-        }}
-      >
-        <Typography variant="h4" gutterBottom>
-          Did You Know?
-        </Typography>
-        <Typography variant="body1">
-          According to a recent study, individuals who create and stick to a budget save an average of 18% more money annually compared to those who don't budget.
-        </Typography>
-      </Box>
+  const features = [
+    {
+      title: "WealthWizard AI",
+      description: "Get personalized financial advice from our advanced AI-powered planning specialist.",
+      link: "/home",
+      image: featureImage
+    },
+    {
+      title: "Budget Calculation & Optimization",
+      description: "Create and optimize your budget for maximum savings and financial stability.",
+      link: "/budget",
+      image: featureImage1
+    },
+    {
+      title: "Credit Score Improvement Guide",
+      description: "Discover actionable steps to boost your credit score and unlock better financial opportunities.",
+      link: "/creditscore",
+      image: featureImage2
+    },
+    
+  ];
 
-      {/* Feature Section */}
-      <Box sx={{ padding: '40px', backgroundColor: '#f5f5f5' }}>
-        <Grid container spacing={4} alignItems="center">
-          <Grid item xs={12} md={6}>
-            <Box
-              component="img"
-              src={featureImage}
-              alt="Budget Creation and Optimization"
-              sx={{
-                width: '100%',
-                height: 'auto',
-                borderRadius: '8px',
-                boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
-              }}
-            />
-          </Grid>
-          <Grid item xs={12} md={6}>
-            <Typography variant="h4" gutterBottom>
-              Budget Creation and Optimization
+  const facts = [
+    "AI-powered financial planning tools can help increase investment returns by up to 4% annually.",
+    "People who create and stick to a budget save 10% more of their income on average.",
+    "Improving your credit score by 100 points could save you thousands on mortgage interest.",
+  ];
+
+  return (
+    <>
+      <AppBar position="fixed">
+        <Toolbar>
+          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+            WealthWizard
+          </Typography>
+          <Button color="inherit" component={Link} to="/login">Login</Button>
+        </Toolbar>
+      </AppBar>
+      <MainContent>
+        <FullScreenHero>
+          <Container maxWidth="m">
+            <Typography component="h1" variant="h2" align="center" gutterBottom color="black">
+              Plan Your Financial Future with WealthWizard
             </Typography>
-            <Typography variant="body1" paragraph>
-              Our advanced budgeting tool helps you create a personalized budget tailored to your financial goals. With AI-powered optimization, we ensure your money works as hard as you do.
+            <Typography variant="h5" align="center" paragraph>
+              Take control of your finances with our powerful tools like WealthWizard Ai and Budget Planning and Optimization tool
             </Typography>
-            <Button
-              variant="contained"
-              color="primary"
-              component={Link}
-              href="/budget-tool"
-              target="_blank"
-              rel="noopener"
-            >
-              Try Our Budget Tool
-            </Button>
-          </Grid>
-        </Grid>
-      </Box>
-    </Box>
+          </Container>
+        </FullScreenHero>
+
+        {features.map((feature, index) => (
+          <React.Fragment key={index}>
+            {index < features.length && (
+              <WhiteSection>
+                <Container>
+                  <Typography variant="h5" gutterBottom>Did You Know?</Typography>
+                  <Typography variant="body1">{facts[index]}</Typography>
+                </Container>
+              </WhiteSection>
+            )}
+            <Grid container>
+              <Grid item xs={12} md={6} order={{ xs: 2, md: index % 2 === 0 ? 2 : 1 }}>
+                <Box sx={{ p: 4 }}>
+                  <Typography variant="h4" gutterBottom>{feature.title}</Typography>
+                  <Typography variant="body1" paragraph>{feature.description}</Typography>
+                  <Button variant="contained" component={Link} to={feature.link}>Learn More</Button>
+                </Box>
+              </Grid>
+              <Grid item xs={12} md={6} order={{ xs: 1, md: index % 2 === 0 ? 1 : 2 }}>
+                <ImageSection image={feature.image} />
+              </Grid>
+            </Grid>
+          </React.Fragment>
+        ))}
+
+        <Footer>
+          <Container>
+            <Typography variant="h6" gutterBottom>WealthWizard</Typography>
+            <Typography variant="body2">
+              © 2024 WealthWizard. All rights reserved.
+            </Typography>
+          </Container>
+        </Footer>
+      </MainContent>
+    </>
   );
 };
 
