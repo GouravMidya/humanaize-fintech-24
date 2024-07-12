@@ -23,19 +23,25 @@ import {
   ResponsiveContainer,
   Legend,
   Tooltip,
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
 } from "recharts";
 import WealthWizard from "../components/WealthWizard";
 
 const DebtPayoffCalculator = () => {
   const [debts, setDebts] = useState([
-    { name: "", amount: "", interestRate: "" },
+    { name: "", amount: "", interestRate: "", monthlyPayment: "" },
   ]);
-  const [monthlyPayment, setMonthlyPayment] = useState("");
-  const [extraPayment, setExtraPayment] = useState("");
   const [results, setResults] = useState(null);
 
   const addDebt = () => {
-    setDebts([...debts, { name: "", amount: "", interestRate: "" }]);
+    setDebts([
+      ...debts,
+      { name: "", amount: "", interestRate: "", monthlyPayment: "" },
+    ]);
   };
 
   const removeDebt = (index) => {
@@ -50,25 +56,27 @@ const DebtPayoffCalculator = () => {
   };
 
   const calculatePayoff = () => {
-    const totalMonthlyPayment =
-      parseFloat(monthlyPayment) + parseFloat(extraPayment || 0);
     let totalMonths = 0;
     let totalInterest = 0;
     let totalPaid = 0;
     const debtResults = debts.map((debt) => {
       const principal = parseFloat(debt.amount);
       const rate = parseFloat(debt.interestRate) / 100 / 12;
+      const monthlyPayment = parseFloat(debt.monthlyPayment);
       let balance = principal;
       let months = 0;
       let interestPaid = 0;
+      const balanceOverTime = [{ month: 0, balance: balance }];
 
       while (balance > 0) {
         const interest = balance * rate;
-        const principalPayment = totalMonthlyPayment - interest;
+        const principalPayment = monthlyPayment - interest;
 
         balance -= principalPayment;
         interestPaid += interest;
         months++;
+
+        balanceOverTime.push({ month: months, balance: Math.max(0, balance) });
 
         if (months > 360) break; // Avoid infinite loop
       }
@@ -82,6 +90,7 @@ const DebtPayoffCalculator = () => {
         months,
         interestPaid: interestPaid.toFixed(2),
         totalPaid: (principal + interestPaid).toFixed(2),
+        balanceOverTime,
       };
     });
 
@@ -93,20 +102,22 @@ const DebtPayoffCalculator = () => {
       totalMonths,
       totalInterest: totalInterest.toFixed(2),
       totalPaid: totalPaid.toFixed(2),
-      summary: `You can pay off your debts in **${totalMonths} months (${years} years and ${remainingMonths} months)** by making fixed payments of $${totalMonthlyPayment.toFixed(
+      summary: `You can pay off your debts in **${totalMonths} months (${years} years and ${remainingMonths} months)**. You will need to pay a total of ₹${totalPaid.toFixed(
         2
-      )} every month, of which, $${
-        extraPayment || 0
-      } is the extra monthly payment. You will need to pay a total of $${totalPaid.toFixed(
-        2
-      )}, of which the total interest is $${totalInterest.toFixed(2)}.`,
+      )}, of which the total interest is ₹${totalInterest.toFixed(2)}.`,
     });
   };
 
-  const COLORS = ["#0088FE", "#00C49F"];
+  const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#8884D8"];
+
+  const formatXAxis = (tickItem) => {
+    const years = Math.floor(tickItem / 12);
+    const months = tickItem % 12;
+    return `${years}y ${months}m`;
+  };
 
   return (
-    <Container maxWidth="md" sx={{ mt: 4 }}>
+    <Container maxWidth="lg" sx={{ mt: 4 }}>
       <Typography variant="h4" gutterBottom>
         Debt Payoff Calculator
       </Typography>
@@ -114,7 +125,7 @@ const DebtPayoffCalculator = () => {
         <Grid container spacing={3}>
           {debts.map((debt, index) => (
             <React.Fragment key={index}>
-              <Grid item xs={12} sm={3}>
+              <Grid item xs={12} sm={2.5}>
                 <TextField
                   fullWidth
                   label="Debt Name"
@@ -124,7 +135,7 @@ const DebtPayoffCalculator = () => {
                   }
                 />
               </Grid>
-              <Grid item xs={12} sm={3}>
+              <Grid item xs={12} sm={2.5}>
                 <TextField
                   fullWidth
                   label="Debt Amount"
@@ -135,7 +146,7 @@ const DebtPayoffCalculator = () => {
                   }
                 />
               </Grid>
-              <Grid item xs={12} sm={3}>
+              <Grid item xs={12} sm={2.5}>
                 <TextField
                   fullWidth
                   label="Interest Rate (%)"
@@ -146,7 +157,25 @@ const DebtPayoffCalculator = () => {
                   }
                 />
               </Grid>
-              <Grid item xs={12} sm={3}>
+              <Grid item xs={12} sm={2.5}>
+                <TextField
+                  fullWidth
+                  label="Monthly Payment"
+                  type="number"
+                  value={debt.monthlyPayment}
+                  onChange={(e) =>
+                    handleDebtChange(index, "monthlyPayment", e.target.value)
+                  }
+                />
+              </Grid>
+              <Grid
+                item
+                xs={12}
+                sm={2}
+                container
+                alignItems="center"
+                justifyContent="center"
+              >
                 <IconButton
                   onClick={() => removeDebt(index)}
                   disabled={debts.length === 1}
@@ -161,26 +190,12 @@ const DebtPayoffCalculator = () => {
               Add Debt
             </Button>
           </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              fullWidth
-              label="Monthly Payment"
-              type="number"
-              value={monthlyPayment}
-              onChange={(e) => setMonthlyPayment(e.target.value)}
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              fullWidth
-              label="Extra Monthly Payment"
-              type="number"
-              value={extraPayment}
-              onChange={(e) => setExtraPayment(e.target.value)}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <Button variant="contained" onClick={calculatePayoff} fullWidth>
+          <Grid item xs={12} container justifyContent="center">
+            <Button
+              variant="contained"
+              onClick={calculatePayoff}
+              sx={{ width: "200px" }}
+            >
               Calculate
             </Button>
           </Grid>
@@ -204,8 +219,8 @@ const DebtPayoffCalculator = () => {
                   <TableRow key={index}>
                     <TableCell>{debt.name}</TableCell>
                     <TableCell>{debt.months}</TableCell>
-                    <TableCell>${debt.interestPaid}</TableCell>
-                    <TableCell>${debt.totalPaid}</TableCell>
+                    <TableCell>₹{debt.interestPaid}</TableCell>
+                    <TableCell>₹{debt.totalPaid}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -253,14 +268,62 @@ const DebtPayoffCalculator = () => {
                     />
                   ))}
                 </Pie>
-                <Tooltip formatter={(value) => `$${value.toFixed(2)}`} />
+                <Tooltip formatter={(value) => `₹${value.toFixed(2)}`} />
                 <Legend />
               </PieChart>
             </ResponsiveContainer>
           </Paper>
+
+          <Paper elevation={3} sx={{ p: 3, mb: 3 }}>
+            <Typography variant="h6" gutterBottom>
+              Debt Payoff Over Time
+            </Typography>
+            <ResponsiveContainer width="100%" height={400}>
+              <LineChart
+                margin={{
+                  top: 5,
+                  right: 30,
+                  left: 50,
+                  bottom: 5,
+                }}
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis
+                  dataKey="month"
+                  type="number"
+                  tickFormatter={formatXAxis}
+                  label={{
+                    value: "Time (Years and Months)",
+                    position: "insideBottomRight",
+                    offset: -10,
+                  }}
+                />
+                <YAxis
+                  label={{
+                    value: "Debt Remaining (₹)",
+                    angle: -90,
+                    position: "insideLeft",
+                    offset: -40,
+                  }}
+                />
+                <Tooltip formatter={(value) => `₹${value.toFixed(2)}`} />
+                <Legend />
+                {results.debts.map((debt, index) => (
+                  <Line
+                    key={debt.name}
+                    type="monotone"
+                    dataKey="balance"
+                    data={debt.balanceOverTime}
+                    name={debt.name}
+                    stroke={COLORS[index % COLORS.length]}
+                  />
+                ))}
+              </LineChart>
+            </ResponsiveContainer>
+          </Paper>
         </>
       )}
-      <WealthWizard initialMessage={"How to pay off debt quickly?"}/>
+      <WealthWizard initialMessage={"How to pay off debt quickly?"} />
     </Container>
   );
 };
