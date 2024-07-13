@@ -29,7 +29,7 @@ prompt = PromptTemplate(
         "suggestions": ["suggestion1", "suggestion2", ...]
     }}
 
-    Ensure that the optimized expense percentages add up to 100% while keeping the surplus equal to or higher than original value.
+    Ensure that the optimized expense percentages add up to 100% while keeping the savings equal or higher than original value.
     {format_instructions}
     """,
     input_variables=["income", "expenses"],

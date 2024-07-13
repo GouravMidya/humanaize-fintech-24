@@ -5,6 +5,7 @@ import cors from "cors";
 import authRoute from "./routes/authRoute.js";
 import financialinfoRoute from "./routes/financialinfoRoute.js";
 import cookieParser from "cookie-parser";
+import expenseRoutes from "./routes/expenseRoutes.js";
 
 dotenv.config();
 
@@ -19,7 +20,7 @@ app.use(cors());
 
 app.use("/", authRoute);
 app.use("/", financialinfoRoute);
-
+app.use("/", expenseRoutes); // Use the new expense routes
 mongoose
   .connect(mongoURI)
   .then(() => {

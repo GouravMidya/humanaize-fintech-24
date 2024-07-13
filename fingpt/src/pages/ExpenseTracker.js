@@ -18,13 +18,16 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-  Tooltip
+  Tooltip,TableContainer, Table, TableHead, TableRow, TableCell, TableBody
 } from '@mui/material';
+import { getUsername } from '../services/authServices';
 import { 
   PieChart, 
   BarChart,
 } from '@mui/x-charts';
+import axios from 'axios';
 import { jsPDF } from "jspdf";
+import { format } from 'date-fns';
 import "jspdf-autotable";
 import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS, TimeScale, LinearScale, PointElement, LineElement, Title, Tooltip as ChartTooltip, Legend, ArcElement } from 'chart.js';
@@ -36,6 +39,7 @@ ChartJS.register(ArcElement, TimeScale, LinearScale, PointElement, LineElement, 
 const ExpenseTracker = () => {
   const [expenses, setExpenses] = useState([]);
   const [newExpense, setNewExpense] = useState({
+    userId:'',
     amount: '',
     category: '',
     date: new Date().toISOString().split('T')[0],
@@ -43,29 +47,60 @@ const ExpenseTracker = () => {
   });
   const [dateRange, setDateRange] = useState({ start: '', end: '' });
   const [openAllExpensesDialog, setOpenAllExpensesDialog] = useState(false);
-
+  const [userId, setUserId] = useState('');
   useEffect(() => {
-    const storedExpenses = localStorage.getItem('expenses');
-    if (storedExpenses) {
-      setExpenses(JSON.parse(storedExpenses));
-    }
-  }, []);
+    const fetchUserDetails = async () => {
+        try {
+            const { userId } = await getUsername();
+            setUserId(userId);
+            console.log(userId);
+            newExpense.userId=userId;
+            await fetchExpenses(userId);
+        } catch (error) {
+            console.error('Error fetching user details:', error);
+        }
+    };
+    fetchUserDetails();
+}, []);
 
-  useEffect(() => {
-    localStorage.setItem('expenses', JSON.stringify(expenses));
-  }, [expenses]);
+const fetchExpenses = async (userIdParam) => {
+  try {
+    const response = await axios.post(`${process.env.REACT_APP_NODEURL}/getexpenses`, { userId: userIdParam });
+    setExpenses(response.data);
+    console.log(response.data);
+  } catch (error) {
+    console.error('Error fetching expenses:', error);
+  }
+};
 
-  const addExpense = () => {
-    if (newExpense.amount && newExpense.category && newExpense.date) {
-      setExpenses([...expenses, { ...newExpense, id: Date.now() }]);
+  const addExpense = async () => {
+  if (newExpense.amount && newExpense.category && newExpense.date) {
+    try {
+      const response = await axios.post(`${process.env.REACT_APP_NODEURL}/expenses`, newExpense);
+      await fetchExpenses(userId); // Refresh all expenses
       setNewExpense({
+        userId: userId,
         amount: '',
         category: '',
         date: new Date().toISOString().split('T')[0],
         description: ''
       });
-    } else {
-      alert("Please fill in all required fields (Amount, Category, and Date)");
+    } catch (error) {
+      console.error('Error adding expense:', error);
+      alert("Failed to add expense. Please try again.");
+    }
+  } else {
+    alert("Please fill in all required fields (Amount, Category, and Date)");
+  }
+};
+
+  const updateExpense = async (id, updatedExpense) => {
+    try {
+      await axios.put(`/api/expenses/update/${id}`, updatedExpense, { withCredentials: true });
+      fetchExpenses(); // Refresh the expenses list
+    } catch (error) {
+      console.error('Error updating expense:', error);
+      alert("Failed to update expense. Please try again.");
     }
   };
 
@@ -77,77 +112,105 @@ const ExpenseTracker = () => {
       return expenseDate >= firstDayOfMonth && expenseDate <= now;
     });
   };
-
+  
   const currentMonthExpenses = getCurrentMonthExpenses();
+  
   const totalExpenses = currentMonthExpenses.reduce((total, expense) => total + parseFloat(expense.amount), 0);
-
-  const expensesByCategory = currentMonthExpenses.reduce((acc, expense) => {
-    acc[expense.category] = (acc[expense.category] || 0) + parseFloat(expense.amount);
-    return acc;
-  }, {});
-
-  const generatePDF = () => {
-    const doc = new jsPDF();
-    const tableColumn = ["Date", "Category", "Amount", "Description"];
-    const tableRows = [];
-
-    const filteredExpenses = expenses.filter(expense => 
-      new Date(expense.date) >= new Date(dateRange.start) &&
-      new Date(expense.date) <= new Date(dateRange.end)
-    );
-
-    filteredExpenses.forEach(expense => {
-      const expenseData = [
-        expense.date,
-        expense.category,
-        `$${expense.amount}`,
-        expense.description
-      ];
-      tableRows.push(expenseData);
-    });
-
-    doc.text("Expense Report", 14, 15);
-    doc.autoTable(tableColumn, tableRows, { startY: 20 });
-
-    doc.save("expense_report.pdf");
-  };
-
-  const expensesByDate = currentMonthExpenses.reduce((acc, expense) => {
-    const date = new Date(expense.date).toDateString();
-    if (!acc[date]) {
-      acc[date] = [];
-    }
-    acc[date].push(expense);
-    return acc;
-  }, {});
-
-  const aggregatedExpensesByDate = Object.entries(expensesByDate).map(([date, expenses]) => {
-    const totalAmount = expenses.reduce((total, expense) => total + parseFloat(expense.amount), 0);
-    return {
-      date,
-      totalAmount,
-      details: expenses
+  
+  // Prepare data for the line chart
+const aggregatedExpenses = currentMonthExpenses.reduce((acc, expense) => {
+  const date = expense.date.split('T')[0]; // Assuming date is in ISO format
+  if (!acc[date]) {
+    acc[date] = {
+      totalAmount: 0,
+      expenses: []
     };
+  }
+  acc[date].totalAmount += parseFloat(expense.amount);
+  acc[date].expenses.push(expense);
+  return acc;
+}, {});
+
+const expensesByCategory = currentMonthExpenses.reduce((acc, expense) => {
+  acc[expense.category] = (acc[expense.category] || 0) + parseFloat(expense.amount);
+  return acc;
+}, {});
+
+const generatePDF = () => {
+  const doc = new jsPDF();
+  const tableColumn = ["Date", "Category", "Amount", "Description"];
+  const tableRows = [];
+
+  const filteredExpenses = expenses.filter(expense => 
+    new Date(expense.date) >= new Date(dateRange.start) &&
+    new Date(expense.date) <= new Date(dateRange.end)
+  );
+
+  // Sort expenses by date in descending order
+  filteredExpenses.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+  let totalAmount = 0;
+
+  filteredExpenses.forEach(expense => {
+    const expenseData = [
+      format(new Date(expense.date), 'MMM dd, yyyy'),
+      expense.category,
+      `$${parseFloat(expense.amount).toFixed(2)}`,
+      expense.description
+    ];
+    tableRows.push(expenseData);
+    totalAmount += parseFloat(expense.amount);
   });
 
+  // Add title with date range
+  doc.setFontSize(18);
+  doc.text(`Expense Report`, 14, 15);
+  doc.setFontSize(12);
+  doc.text(`From: ${format(new Date(dateRange.start), 'MMM dd, yyyy')} To: ${format(new Date(dateRange.end), 'MMM dd, yyyy')}`, 14, 25);
+
+  // Add total expenses
+  doc.text(`Total Expenses: $${totalAmount.toFixed(2)}`, 14, 35);
+
+  // Add table
+  doc.autoTable({
+    head: [tableColumn],
+    body: tableRows,
+    startY: 40,
+    theme: 'grid',
+    styles: { fontSize: 8 },
+    headStyles: { fillColor: [75, 75, 75] }
+  });
+
+  // Add page number
+  const pageCount = doc.internal.getNumberOfPages();
+  for(let i = 1; i <= pageCount; i++) {
+    doc.setPage(i);
+    doc.setFontSize(10);
+    doc.text(`Page ${i} of ${pageCount}`, doc.internal.pageSize.width - 20, doc.internal.pageSize.height - 10);
+  }
+
+  doc.save("expense_report.pdf");
+};
+
   // Prepare data for the line chart
-  const sortedExpenses = expenses
+  const sortedExpenses = currentMonthExpenses
   .sort((a, b) => new Date(a.date) - new Date(b.date))
-  .filter(expense => expense.date && expense.amount); // Ensure we have valid date and amount
+  .filter(expense => expense.date && expense.amount);
 
   const lineChartData = {
     datasets: [{
       label: 'Daily Expenses',
-      data: sortedExpenses.map(expense => ({
-        x: new Date(expense.date),
-        y: parseFloat(expense.amount)
+      data: Object.entries(aggregatedExpenses).map(([date, data]) => ({
+        x: new Date(date),
+        y: data.totalAmount,
+        expenses: data.expenses
       })),
       fill: false,
       borderColor: 'rgb(75, 192, 192)',
       tension: 0.1
     }]
   };
-
+  
   const lineChartOptions = {
     responsive: true,
     maintainAspectRatio: false,
@@ -170,28 +233,25 @@ const ExpenseTracker = () => {
         beginAtZero: true,
         title: {
           display: true,
-          text: 'Amount ($)'
+          text: 'Amount (Rs. )'
         }
       }
     },
     plugins: {
       tooltip: {
         callbacks: {
-          label: (context) => {
-            const dataIndex = context.dataIndex;
-            const expense = sortedExpenses[dataIndex];
-            if (expense) {
-              return `${expense.category}: $${expense.amount}`;
-            }
-            return '';
+          title: (context) => {
+            return format(context[0].parsed.x, 'MMMM d, yyyy');
           },
-          afterBody: (tooltipItems) => {
-            const dataIndex = tooltipItems[0].dataIndex;
-            const expense = sortedExpenses[dataIndex];
-            if (expense && expense.description) {
-              return `Description: ${expense.description}`;
-            }
-            return '';
+          label: (context) => {
+            return `Total: ${context.parsed.y.toFixed(2)}`;
+          },
+          afterBody: (context) => {
+            const dataIndex = context[0].dataIndex;
+            const dayExpenses = context[0].dataset.data[dataIndex].expenses;
+            return dayExpenses.map(expense => 
+              `${expense.category}: $${expense.amount} - ${expense.description || 'No description'}`
+            );
           }
         }
       },
@@ -227,15 +287,12 @@ const ExpenseTracker = () => {
                 value={newExpense.category}
                 onChange={(e) => setNewExpense({ ...newExpense, category: e.target.value })}
               >
-                <MenuItem value="Income">Income</MenuItem>
                 <MenuItem value="Food">Food</MenuItem>
                 <MenuItem value="Transportation">Transportation</MenuItem>
                 <MenuItem value="Housing">Housing</MenuItem>
                 <MenuItem value="Entertainment">Entertainment</MenuItem>
                 <MenuItem value="Utilities">Utilities</MenuItem>
-                <MenuItem value="Healthcare">Healthcare</MenuItem>
-                <MenuItem value="Education">Education</MenuItem>
-                <MenuItem value="Personal">Personal</MenuItem>
+                <MenuItem value="Other">Other</MenuItem>
               </Select>
             </FormControl>
             <TextField
@@ -274,16 +331,18 @@ const ExpenseTracker = () => {
                       value: amount,
                       label: category
                     })),
-                    innerRadius: 30,
-                    outerRadius: 100,
+                    innerRadius: 40,
+                    outerRadius: 120,
                     paddingAngle: 2,
                     cornerRadius: 5,
                     startAngle: -90,
                     endAngle: 270,
+                    highlightScope: { faded: 'global', highlighted: 'item' },
+                    faded: { innerRadius: 40, additionalRadius: -10, color: 'gray' }
                   },
                 ]}
-                width={300}
-                height={300}
+                width={350}
+                height={350}
                 slotProps={{
                   legend: {
                     direction: 'row',
@@ -294,11 +353,11 @@ const ExpenseTracker = () => {
                     markGap: 5,
                     itemGap: 10,
                     labelStyle: {
-                      fontSize: 12,
+                      fontSize: 15,
                     },
                   },
                 }}
-                margin={{ top: 20, bottom: 60, left: 0, right: 0 }}
+                margin={{ top: -20, bottom: 60, left: 0, right: 0 }}
               />
             </Box>
           </Paper>
@@ -309,20 +368,34 @@ const ExpenseTracker = () => {
           <Paper elevation={3} sx={{ p: 2, height: '500px', display: 'flex', flexDirection: 'column' }}>
             <Typography variant="h5" gutterBottom>Expense by Category</Typography>
             <Box sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-              <BarChart
-                xAxis={[{ scaleType: 'band', data: Object.keys(expensesByCategory) }]}
-                series={[{ data: Object.values(expensesByCategory) }]}
-                width={350}
-                height={350}
-              />
+            <BarChart
+              xAxis={[{ 
+                scaleType: 'band', 
+                data: Object.keys(expensesByCategory),
+                tickLabelStyle: {
+                  angle: -90,
+                  textAnchor: 'end',
+                  dominantBaseline: 'hanging',
+                }
+              }]}
+              series={[{ data: Object.values(expensesByCategory) }]}
+              width={350}
+              height={350}
+              bottomAxis={{
+                tickSize: 0,
+                tickMargin: 15,
+              }}
+            />
             </Box>
           </Paper>
         </Grid>
 
-        {/* Line Chart */}
+       {/* Line Chart */}
         <Grid item xs={12}>
           <Paper elevation={3} sx={{ p: 2, height: '400px', display: 'flex', flexDirection: 'column' }}>
-            <Typography variant="h5" gutterBottom>Expense Trend</Typography>
+            <Typography variant="h5" gutterBottom>
+              Expense Trend ({format(new Date(), 'MMMM yyyy')})
+            </Typography>
             <Box sx={{ flexGrow: 1, position: 'relative' }}>
               <Line data={lineChartData} options={lineChartOptions} />
             </Box>
@@ -332,17 +405,24 @@ const ExpenseTracker = () => {
         {/* Recent Expenses */}
         <Grid item xs={12} md={6}>
           <Paper elevation={3} sx={{ p: 2, height: '300px', display: 'flex', flexDirection: 'column' }}>
-            <Typography variant="h5" gutterBottom>Recent Expenses</Typography>
-            <List sx={{ flexGrow: 1, overflow: 'auto' }}>
-              {expenses.slice(-5).reverse().map((expense) => (
-                <ListItem key={expense.id}>
-                  <ListItemText 
-                    primary={`$${expense.amount} - ${expense.category}`} 
-                    secondary={`${expense.date} - ${expense.description}`} 
-                  />
-                </ListItem>
-              ))}
-            </List>
+            <Typography variant="h5" gutterBottom sx={{marginBottom:'20px'}}>Recent Expenses</Typography>
+            <Grid container spacing={2} sx={{ flexGrow: 1, overflow: 'auto' }}>
+              {expenses
+                .sort((a, b) => new Date(b.date) - new Date(a.date))
+                .slice(0, 5)
+                .map((expense) => (
+                  <Grid item xs={12} sm={12} md={12} key={expense._id}>
+                    <Paper elevation={2} sx={{ p: 2, height: '100%', bgcolor: '#f0f4f8', borderLeft: '4px solid #1976d2' }}>
+                      <Typography variant="body1">
+                        ${expense.amount} - {expense.category}
+                      </Typography>
+                      <Typography variant="body2" color="textSecondary">
+                        {new Date(expense.date).toLocaleDateString()} - {expense.description}
+                      </Typography>
+                    </Paper>
+                  </Grid>
+                ))}
+            </Grid>
             <Button variant="contained" color="primary" onClick={() => setOpenAllExpensesDialog(true)} fullWidth sx={{ mt: 2 }}>
               See All Expenses
             </Button>
@@ -382,21 +462,36 @@ const ExpenseTracker = () => {
       <Dialog open={openAllExpensesDialog} onClose={() => setOpenAllExpensesDialog(false)} maxWidth="md" fullWidth>
         <DialogTitle>All Expenses</DialogTitle>
         <DialogContent>
-          <List>
-            {expenses.sort((a, b) => new Date(b.date) - new Date(a.date)).map((expense) => (
-              <ListItem key={expense.id}>
-                <ListItemText 
-                  primary={`$${expense.amount} - ${expense.category}`} 
-                  secondary={`${expense.date} - ${expense.description}`} 
-                />
-              </ListItem>
-            ))}
-          </List>
+          <TableContainer component={Paper}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Date</TableCell>
+                  <TableCell>Amount</TableCell>
+                  <TableCell>Category</TableCell>
+                  <TableCell>Description</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {expenses.sort((a, b) => new Date(b.date) - new Date(a.date)).map((expense) => (
+                  <TableRow key={expense._id}>
+                    <TableCell>{new Date(expense.date).toLocaleDateString()}</TableCell>
+                    <TableCell>${expense.amount}</TableCell>
+                    <TableCell>{expense.category}</TableCell>
+                    <TableCell>{expense.description}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setOpenAllExpensesDialog(false)}>Close</Button>
         </DialogActions>
       </Dialog>
+
+
+    <br/>
       <WealthWizard initialMessage="How to manage my expenses?"/>
     </Container>
   );

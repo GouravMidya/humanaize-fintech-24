@@ -15,6 +15,7 @@ import featureImage from "./../assets/support0.jpeg";
 import featureImage1 from "./../assets/support1.jpeg";
 import featureImage2 from "./../assets/support2.png";
 import featureImage3 from "./../assets/support3.jpg";
+import featureImage4 from "./../assets/support4.jpg"
 import WealthWizard from "../components/WealthWizard";
 
 const FullScreenHero = styled(Box)(({ theme }) => ({
@@ -60,6 +61,12 @@ const LandingPage = () => {
       image: featureImage,
     },
     {
+      title: "Expense Tracker",
+      description:"monitor and categorize your spending  while gaining insights into spending patterns to make informed decisions and work towards your financial goals.",
+      link:"/expensetracker",
+      image: featureImage4,
+    },
+    {
       title: "Budget Calculation & Optimization",
       description:
         "Create and optimize your budget for maximum savings and financial stability.",
@@ -80,14 +87,16 @@ const LandingPage = () => {
       link: "/debt",
       image: featureImage3,
     },
+    
   ];
 
   const facts = [
     "AI-powered financial planning tools can help increase investment returns by up to 4% annually.",
+    "Studies show that people who regularly use expense trackers save up to 20% more money than those who don't. This is due to increased awareness of spending habits, which often leads to more mindful purchasing decisions.",
     "People who create and stick to a budget save 10% more of their income on average.",
     "Improving your credit score by 100 points could save you thousands on mortgage interest.",
     "Do you know that debt can be a powerful tool for financial growth but also a source of significant financial risk?",
-  ];
+    ];
 
   return (
     <>
@@ -166,7 +175,7 @@ const LandingPage = () => {
             </Grid>
           </React.Fragment>
         ))}
-        <br />
+        <br /><br/>
         <Footer>
           <Container>
             <Typography variant="h6" gutterBottom>
