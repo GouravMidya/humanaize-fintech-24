@@ -16,6 +16,7 @@ import featureImage1 from "./../assets/support1.jpeg";
 import featureImage2 from "./../assets/support2.png";
 import featureImage3 from "./../assets/support3.jpg";
 import featureImage4 from "./../assets/support4.jpg"
+import featureImage5 from "./../assets/support5.jpeg"
 import WealthWizard from "../components/WealthWizard";
 
 const FullScreenHero = styled(Box)(({ theme }) => ({
@@ -87,6 +88,13 @@ const LandingPage = () => {
       link: "/debt",
       image: featureImage3,
     },
+    {
+      title: "Financial Goal Planning",
+      description:
+        "Set and achieve your financial goals, track your progress, and stay motivated.",
+      link: "/goal",
+      image: featureImage5,
+    }
     
   ];
 
