@@ -19,6 +19,7 @@ import CreditScore from "./pages/CreditScore";
 import ExpenseTracker from "./pages/ExpenseTracker";
 import FinancialGoalTracker from "./pages/FinancialGoalTracker";
 import Navbar from "./components/Navbar/Navbar";
+import InvestmentPortfolio from './pages/PortfolioPage';
 
 function AppContent() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -74,6 +75,7 @@ function AppContent() {
         <Route path="/debt" element={<DebtPayoffCalculator />} />
         <Route path="/expensetracker" element={<ExpenseTracker />} />
         <Route path="/goal" element={<FinancialGoalTracker />} />
+        <Route path="/investment" element={<InvestmentPortfolio/>}/>
       </Routes>
     </>
   );

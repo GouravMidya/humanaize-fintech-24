@@ -1,6 +1,5 @@
 import React from "react";
 import { Typography, Button, Container, Grid, Box } from "@mui/material";
-import { styled } from "@mui/system";
 import { Link } from "react-router-dom";
 import heroImage from "./../assets/hero_image_3.jpg";
 import featureImage from "./../assets/support0.jpeg";
@@ -10,16 +9,28 @@ import featureImage3 from "./../assets/support3.jpg";
 import featureImage4 from "./../assets/support4.jpg";
 import featureImage5 from "./../assets/support6.jpg";
 import WealthWizard from "../components/WealthWizard";
+import { styled, useTheme } from '@mui/material/styles';
 
 const FullScreenHero = styled(Box)(({ theme }) => ({
-  backgroundImage: `url(${heroImage})`,
-  backgroundSize: "cover",
-  backgroundPosition: "center",
+  position: "relative",
   minHeight: "100vh",
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
-  color: theme.palette.common.white,
+  color: theme.palette.common.black,
+  '&::before': {
+    content: '""',
+    position: "absolute",
+    top: 0,
+    left: 0,
+    width: "100%",
+    height: "100%",
+    backgroundImage: `url(${heroImage})`,
+    backgroundSize: "cover",
+    backgroundPosition: "center",
+    opacity: 0.5, // Adjust the opacity value to reduce transparency
+    zIndex: -1,
+  },
 }));
 
 const WhiteSection = styled(Box)(({ theme }) => ({
@@ -41,6 +52,7 @@ const Footer = styled(Box)(({ theme }) => ({
 }));
 
 const LandingPage = () => {
+  const theme = useTheme();
   const features = [
     {
       title: "WealthWizard AI",
