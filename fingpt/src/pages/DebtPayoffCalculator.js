@@ -118,7 +118,7 @@ const DebtPayoffCalculator = () => {
 
   return (
     <Container maxWidth="lg" sx={{ mt: 4 }}>
-      <Typography variant="h4" gutterBottom>
+      <Typography variant="h4" gutterBottom marginBottom={"20px"}>
         Debt Payoff Calculator
       </Typography>
       <Paper elevation={3} sx={{ p: 3, mb: 3 }}>

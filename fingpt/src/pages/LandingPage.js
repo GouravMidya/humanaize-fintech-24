@@ -1,29 +1,21 @@
 import React from "react";
-import {
-  AppBar,
-  Toolbar,
-  Typography,
-  Button,
-  Container,
-  Grid,
-  Box,
-} from "@mui/material";
+import { Typography, Button, Container, Grid, Box } from "@mui/material";
 import { styled } from "@mui/system";
 import { Link } from "react-router-dom";
-import heroImage from "./../assets/hero_image_3.jpg"; // Make sure this path is correct
+import heroImage from "./../assets/hero_image_3.jpg";
 import featureImage from "./../assets/support0.jpeg";
 import featureImage1 from "./../assets/support1.jpeg";
 import featureImage2 from "./../assets/support2.png";
 import featureImage3 from "./../assets/support3.jpg";
-import featureImage4 from "./../assets/support4.jpg"
-import featureImage5 from "./../assets/support5.jpeg"
+import featureImage4 from "./../assets/support4.jpg";
+import featureImage5 from "./../assets/support5.jpeg";
 import WealthWizard from "../components/WealthWizard";
 
 const FullScreenHero = styled(Box)(({ theme }) => ({
   backgroundImage: `url(${heroImage})`,
   backgroundSize: "cover",
   backgroundPosition: "center",
-  height: "100vh",
+  minHeight: "100vh",
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
@@ -48,10 +40,6 @@ const Footer = styled(Box)(({ theme }) => ({
   padding: theme.spacing(6),
 }));
 
-const MainContent = styled(Box)(({ theme }) => ({
-  paddingTop: theme.mixins.toolbar.minHeight, // Add padding to account for the fixed AppBar
-}));
-
 const LandingPage = () => {
   const features = [
     {
@@ -63,8 +51,9 @@ const LandingPage = () => {
     },
     {
       title: "Expense Tracker",
-      description:"monitor and categorize your spending  while gaining insights into spending patterns to make informed decisions and work towards your financial goals.",
-      link:"/expensetracker",
+      description:
+        "monitor and categorize your spending  while gaining insights into spending patterns to make informed decisions and work towards your financial goals.",
+      link: "/expensetracker",
       image: featureImage4,
     },
     {
@@ -94,8 +83,7 @@ const LandingPage = () => {
         "Set and achieve your financial goals, track your progress, and stay motivated.",
       link: "/goal",
       image: featureImage5,
-    }
-    
+    },
   ];
 
   const facts = [
@@ -104,97 +92,82 @@ const LandingPage = () => {
     "People who create and stick to a budget save 10% more of their income on average.",
     "Improving your credit score by 100 points could save you thousands on mortgage interest.",
     "Do you know that debt can be a powerful tool for financial growth but also a source of significant financial risk?",
-    ];
+  ];
 
   return (
     <>
-      <AppBar position="fixed">
-        <Toolbar>
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+      <FullScreenHero>
+        <Container maxWidth="m">
+          <Typography
+            component="h1"
+            variant="h2"
+            align="center"
+            gutterBottom
+            color="black"
+          >
+            Plan Your Financial Future with WealthWizard
+          </Typography>
+          <Typography variant="h5" align="center" paragraph>
+            Take control of your finances with our powerful tools like
+            WealthWizard Ai and Budget Planning and Optimization tool
+          </Typography>
+        </Container>
+      </FullScreenHero>
+
+      {features.map((feature, index) => (
+        <React.Fragment key={index}>
+          {index < features.length && (
+            <WhiteSection>
+              <Container>
+                <Typography variant="h5" gutterBottom>
+                  Did You Know?
+                </Typography>
+                <Typography variant="body1">{facts[index]}</Typography>
+              </Container>
+            </WhiteSection>
+          )}
+          <Grid container>
+            <Grid
+              item
+              xs={12}
+              md={6}
+              order={{ xs: 2, md: index % 2 === 0 ? 2 : 1 }}
+            >
+              <Box sx={{ p: 4 }}>
+                <Typography variant="h4" gutterBottom>
+                  {feature.title}
+                </Typography>
+                <Typography variant="body1" paragraph>
+                  {feature.description}
+                </Typography>
+                <Button variant="contained" component={Link} to={feature.link}>
+                  Learn More
+                </Button>
+              </Box>
+            </Grid>
+            <Grid
+              item
+              xs={12}
+              md={6}
+              order={{ xs: 1, md: index % 2 === 0 ? 1 : 2 }}
+            >
+              <ImageSection image={feature.image} />
+            </Grid>
+          </Grid>
+        </React.Fragment>
+      ))}
+      <br />
+      <br />
+      <Footer>
+        <Container>
+          <Typography variant="h6" gutterBottom>
             WealthWizard
           </Typography>
-          <Button color="inherit" component={Link} to="/login">
-            Login
-          </Button>
-        </Toolbar>
-      </AppBar>
-      <MainContent>
-        <FullScreenHero>
-          <Container maxWidth="m">
-            <Typography
-              component="h1"
-              variant="h2"
-              align="center"
-              gutterBottom
-              color="black"
-            >
-              Plan Your Financial Future with WealthWizard
-            </Typography>
-            <Typography variant="h5" align="center" paragraph>
-              Take control of your finances with our powerful tools like
-              WealthWizard Ai and Budget Planning and Optimization tool
-            </Typography>
-          </Container>
-        </FullScreenHero>
-
-        {features.map((feature, index) => (
-          <React.Fragment key={index}>
-            {index < features.length && (
-              <WhiteSection>
-                <Container>
-                  <Typography variant="h5" gutterBottom>
-                    Did You Know?
-                  </Typography>
-                  <Typography variant="body1">{facts[index]}</Typography>
-                </Container>
-              </WhiteSection>
-            )}
-            <Grid container>
-              <Grid
-                item
-                xs={12}
-                md={6}
-                order={{ xs: 2, md: index % 2 === 0 ? 2 : 1 }}
-              >
-                <Box sx={{ p: 4 }}>
-                  <Typography variant="h4" gutterBottom>
-                    {feature.title}
-                  </Typography>
-                  <Typography variant="body1" paragraph>
-                    {feature.description}
-                  </Typography>
-                  <Button
-                    variant="contained"
-                    component={Link}
-                    to={feature.link}
-                  >
-                    Learn More
-                  </Button>
-                </Box>
-              </Grid>
-              <Grid
-                item
-                xs={12}
-                md={6}
-                order={{ xs: 1, md: index % 2 === 0 ? 1 : 2 }}
-              >
-                <ImageSection image={feature.image} />
-              </Grid>
-            </Grid>
-          </React.Fragment>
-        ))}
-        <br /><br/>
-        <Footer>
-          <Container>
-            <Typography variant="h6" gutterBottom>
-              WealthWizard
-            </Typography>
-            <Typography variant="body2">
-              © 2024 WealthWizard. All rights reserved.
-            </Typography>
-          </Container>
-        </Footer>
-      </MainContent>
+          <Typography variant="body2">
+            © 2024 WealthWizard. All rights reserved.
+          </Typography>
+        </Container>
+      </Footer>
       <WealthWizard initialMessage="What is personal financial planning?" />
     </>
   );

@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Container,
   Box,
@@ -16,37 +16,41 @@ import {
   DialogContentText,
   DialogActions,
   ThemeProvider,
-  createTheme
-} from '@mui/material';
-import { AccountBalance as AccountBalanceIcon } from '@mui/icons-material';
-import { signUp, getUsername } from '../services/authServices';
-import axios from 'axios';
+  createTheme,
+} from "@mui/material";
+import { AccountBalance as AccountBalanceIcon } from "@mui/icons-material";
+import { signUp, getUsername } from "../services/authServices";
+import axios from "axios";
 
 // Create a custom theme (same as login page)
 const theme = createTheme({
   palette: {
     primary: {
-      main: '#1976d2', // Blue color
+      main: "#1976d2", // Blue color
     },
     secondary: {
-      main: '#9c27b0', // Purple color
+      main: "#9c27b0", // Purple color
     },
   },
 });
 
 const SignUp = ({ onRegister }) => {
-  const [formData, setFormData] = useState({ email: '', password: '', username: '' });
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+    username: "",
+  });
   const [isLoading, setIsLoading] = useState(false);
   const [showErrorDialog, setShowErrorDialog] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState("");
   const [openFinancialDialog, setOpenFinancialDialog] = useState(false);
   const [financialInfo, setFinancialInfo] = useState({
-    monthlyIncome: '',
-    monthlyExpenses: '',
-    shortTermGoals: '',
-    longTermGoals: '',
-    riskTolerance: '',
-    age: '',
+    monthlyIncome: "",
+    monthlyExpenses: "",
+    shortTermGoals: "",
+    longTermGoals: "",
+    riskTolerance: "",
+    age: "",
   });
   const navigate = useNavigate();
 
@@ -66,7 +70,7 @@ const SignUp = ({ onRegister }) => {
       const { token } = await signUp(formData);
       onRegister(token);
       const { userId } = await getUsername();
-      setFinancialInfo(prevState => ({ ...prevState, userId }));
+      setFinancialInfo((prevState) => ({ ...prevState, userId }));
       setOpenFinancialDialog(true);
     } catch (err) {
       if (err.response && err.response.status === 400) {
@@ -79,12 +83,17 @@ const SignUp = ({ onRegister }) => {
 
   const handleFinancialSubmit = async () => {
     try {
-      await axios.post(`${process.env.REACT_APP_NODEURL}/financeInfo`, financialInfo);
+      await axios.post(
+        `${process.env.REACT_APP_NODEURL}/financeInfo`,
+        financialInfo
+      );
       setOpenFinancialDialog(false);
-      navigate('/home');
+      navigate("/home");
     } catch (error) {
-      console.error('Error submitting financial information:', error);
-      setErrorMessage('Failed to submit financial information. Please try again.');
+      console.error("Error submitting financial information:", error);
+      setErrorMessage(
+        "Failed to submit financial information. Please try again."
+      );
       setShowErrorDialog(true);
     }
   };
@@ -95,15 +104,31 @@ const SignUp = ({ onRegister }) => {
         <Box
           sx={{
             marginTop: 8,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
           }}
         >
-          <Paper elevation={3} sx={{ padding: 4, borderRadius: 2, width: '100%' }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 2 }}>
-              <AccountBalanceIcon sx={{ fontSize: 40, color: 'primary.main', mr: 1 }} />
-              <Typography component="h1" variant="h4" sx={{ fontWeight: 'bold', color: 'primary.main' }}>
+          <Paper
+            elevation={3}
+            sx={{ padding: 4, borderRadius: 2, width: "100%" }}
+          >
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                mb: 2,
+              }}
+            >
+              <AccountBalanceIcon
+                sx={{ fontSize: 40, color: "primary.main", mr: 1 }}
+              />
+              <Typography
+                component="h1"
+                variant="h4"
+                sx={{ fontWeight: "bold", color: "primary.main" }}
+              >
                 WealthWizard
               </Typography>
             </Box>
@@ -153,13 +178,16 @@ const SignUp = ({ onRegister }) => {
                 sx={{ mt: 3, mb: 2 }}
                 disabled={isLoading}
               >
-                {isLoading ? <CircularProgress size={24} /> : 'Sign Up'}
+                {isLoading ? <CircularProgress size={24} /> : "Sign Up"}
               </Button>
             </Box>
           </Paper>
         </Box>
 
-        <Dialog open={showErrorDialog} onClose={() => setShowErrorDialog(false)}>
+        <Dialog
+          open={showErrorDialog}
+          onClose={() => setShowErrorDialog(false)}
+        >
           <DialogTitle>Error</DialogTitle>
           <DialogContent>
             <DialogContentText>{errorMessage}</DialogContentText>
@@ -169,7 +197,10 @@ const SignUp = ({ onRegister }) => {
           </DialogActions>
         </Dialog>
 
-        <Dialog open={openFinancialDialog} onClose={() => setOpenFinancialDialog(false)}>
+        <Dialog
+          open={openFinancialDialog}
+          onClose={() => setOpenFinancialDialog(false)}
+        >
           <DialogTitle>Customize GPT</DialogTitle>
           <DialogContent>
             <DialogContentText>
@@ -238,7 +269,9 @@ const SignUp = ({ onRegister }) => {
             />
           </DialogContent>
           <DialogActions>
-            <Button onClick={() => setOpenFinancialDialog(false)}>Cancel</Button>
+            <Button onClick={() => setOpenFinancialDialog(false)}>
+              Cancel
+            </Button>
             <Button onClick={handleFinancialSubmit}>Submit</Button>
           </DialogActions>
         </Dialog>
