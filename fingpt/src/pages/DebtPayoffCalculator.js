@@ -118,8 +118,8 @@ const DebtPayoffCalculator = () => {
 
   return (
     <Container maxWidth="lg" sx={{ mt: 4 }}>
-      <Typography variant="h4" gutterBottom marginBottom={"20px"}>
-        Debt Payoff Calculator
+      <Typography variant="h5" gutterBottom marginBottom={"20px"}>
+        See how long it could take to pay off your debt.
       </Typography>
       <Paper elevation={3} sx={{ p: 3, mb: 3 }}>
         <Grid container spacing={3}>

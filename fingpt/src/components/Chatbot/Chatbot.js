@@ -9,6 +9,7 @@ import {
   Grid,
   Button,
   CircularProgress,
+  InputAdornment,
 } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 import { v4 as uuidv4 } from "uuid";
@@ -189,31 +190,39 @@ const Chatbot = ({ initialMessage }) => {
           {currentMessages.map((msg, index) => (
             <Message key={index} sender={msg.sender} text={msg.text} />
           ))}
+          {currentMessages.map((msg) => console.log(msg.text))}
         </Box>
-        {showQuestions && (
-          <Grid container spacing={2} style={{ padding: "2rem" }}>
-            {randomQuestions.map((question, index) => (
-              <Grid item xs={12} sm={6} key={index}>
-                <Button
-                  className="button-question"
-                  variant="contained"
-                  style={{
-                    border: "1px dashed #303030",
-                    padding: "10px",
-                    height: "5rem",
-                    backgroundColor: "rgba(255, 255, 255, 0.5)",
-                    borderRadius: "10px",
-                    color: "#303030",
-                  }}
-                  fullWidth
-                  onClick={() => handleQuestionClick(question)}
-                >
-                  {question}
-                </Button>
-              </Grid>
-            ))}
-          </Grid>
-        )}
+        <div style={{ display: "flex", justifyContent: "center" }}>
+          {showQuestions && (
+            <Grid
+              container
+              spacing={2}
+              style={{ padding: "2rem", width: "70%" }}
+            >
+              {randomQuestions.map((question, index) => (
+                <Grid item xs={12} sm={6} key={index}>
+                  <Button
+                    className="button-question"
+                    variant="contained"
+                    style={{
+                      border: "1px solid #303030",
+                      padding: "10px",
+                      height: "5rem",
+                      backgroundColor: "rgba(255, 255, 255, 0.5)",
+                      borderRadius: "10px",
+                      color: "#303030",
+                      boxShadow: "none",
+                    }}
+                    fullWidth
+                    onClick={() => handleQuestionClick(question)}
+                  >
+                    {question}
+                  </Button>
+                </Grid>
+              ))}
+            </Grid>
+          )}
+        </div>
         {currentConversationId && (
           <Box
             className="chat-input"
@@ -222,32 +231,35 @@ const Chatbot = ({ initialMessage }) => {
             p={1}
             borderTop={1}
             borderColor="divider"
+            justifyContent="center"
           >
             <TextField
-              style={{ padding: "0.5rem" }}
+              style={{ padding: "0.5rem", maxWidth: "70%" }}
               fullWidth
               variant="outlined"
               placeholder="Type your message..."
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              onKeyPress={(e) =>
-                e.key === "Enter" &&
-                !isSending[currentConversationId] &&
-                onSend()
-              }
-              disabled={isSending[currentConversationId]} // Disable input while sending
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      color="primary"
+                      onClick={() => onSend()}
+                      disabled={
+                        !input.trim() || isSending[currentConversationId]
+                      }
+                    >
+                      {isSending[currentConversationId] ? (
+                        <CircularProgress size={24} />
+                      ) : (
+                        <SendIcon />
+                      )}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
             />
-            {isSending[currentConversationId] ? (
-              <CircularProgress size={24} color="primary" />
-            ) : (
-              <IconButton
-                color="primary"
-                onClick={() => onSend()}
-                disabled={isSending[currentConversationId]}
-              >
-                <SendIcon />
-              </IconButton>
-            )}
           </Box>
         )}
       </Box>

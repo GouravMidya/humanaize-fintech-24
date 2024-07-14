@@ -4,11 +4,11 @@ import { styled } from "@mui/system";
 import { Link } from "react-router-dom";
 import heroImage from "./../assets/hero_image_3.jpg";
 import featureImage from "./../assets/support0.jpeg";
-import featureImage1 from "./../assets/support1.jpeg";
-import featureImage2 from "./../assets/support2.png";
+import featureImage1 from "./../assets/support8.jpg";
+import featureImage2 from "./../assets/support7.jpg";
 import featureImage3 from "./../assets/support3.jpg";
 import featureImage4 from "./../assets/support4.jpg";
-import featureImage5 from "./../assets/support5.jpeg";
+import featureImage5 from "./../assets/support6.jpg";
 import WealthWizard from "../components/WealthWizard";
 
 const FullScreenHero = styled(Box)(({ theme }) => ({
@@ -92,6 +92,7 @@ const LandingPage = () => {
     "People who create and stick to a budget save 10% more of their income on average.",
     "Improving your credit score by 100 points could save you thousands on mortgage interest.",
     "Do you know that debt can be a powerful tool for financial growth but also a source of significant financial risk?",
+    "Studies show that individuals with a written financial plan are more than twice as likely to achieve their financial goals compared to those without one.",
   ];
 
   return (

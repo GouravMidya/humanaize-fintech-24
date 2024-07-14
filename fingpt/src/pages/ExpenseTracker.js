@@ -314,7 +314,7 @@ const ExpenseTracker = () => {
 
   return (
     <Container maxWidth="lg">
-      <Typography
+      {/* <Typography
         variant="h4"
         align="center"
         gutterBottom
@@ -322,9 +322,9 @@ const ExpenseTracker = () => {
         marginBottom={"20px"}
       >
         Expense Tracker
-      </Typography>
+      </Typography> */}
 
-      <Grid container spacing={3}>
+      <Grid container spacing={3} marginTop={"20px"}>
         {/* Expense Input Form */}
         <Grid item xs={12} md={4}>
           <Paper

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   Container,
   Box,
@@ -180,6 +180,13 @@ const SignUp = ({ onRegister }) => {
               >
                 {isLoading ? <CircularProgress size={24} /> : "Sign Up"}
               </Button>
+            </Box>
+            <Box sx={{ mt: 2, textAlign: "center" }}>
+              <Link to="/login" style={{ textDecoration: "none" }}>
+                <Typography variant="body2" color="primary">
+                  Already signed up? Log in
+                </Typography>
+              </Link>
             </Box>
           </Paper>
         </Box>

@@ -1,42 +1,49 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
-  TextField, Button, MenuItem, FormControl, InputLabel, Select,
-  Typography, Paper, Grid, Alert, Box
-} from '@mui/material';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { LineChart, PieChart } from '@mui/x-charts';
-import { motion } from 'framer-motion';
-import dayjs from 'dayjs';
+  TextField,
+  Button,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  Select,
+  Typography,
+  Paper,
+  Grid,
+  Alert,
+  Box,
+} from "@mui/material";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { LineChart, PieChart } from "@mui/x-charts";
+import { motion } from "framer-motion";
+import dayjs from "dayjs";
 import WealthWizard from "../components/WealthWizard";
 
-
 const commonGoals = [
-    { name: 'Emergency Fund', amount: 10000 },
-    { name: 'Retirement', amount: 1000000 },
-    { name: 'Home Down Payment', amount: 50000 },
-    { name: 'Child Education', amount: 100000 },
-    { name: 'Vacation', amount: 5000 },
-    { name: 'Wedding', amount: 25000 },
-    { name: 'Car Purchase', amount: 30000 },
-    { name: 'Debt Repayment', amount: 20000 },
-    { name: 'Business Startup', amount: 50000 },
-    { name: 'Home Renovation', amount: 15000 },
-  ];
-  
-  const assetTypes = [
-    { name: 'Mutual Funds', avgReturn: 12, percentage: 40 },
-    { name: 'Stocks', avgReturn: 10, percentage: 30 },
-    { name: 'Government Bonds', avgReturn: 6, percentage: 20 },
-    { name: 'Gold', avgReturn: 8, percentage: 10 },
-  ];
-  
+  { name: "Emergency Fund", amount: 10000 },
+  { name: "Retirement", amount: 1000000 },
+  { name: "Home Down Payment", amount: 50000 },
+  { name: "Child Education", amount: 100000 },
+  { name: "Vacation", amount: 5000 },
+  { name: "Wedding", amount: 25000 },
+  { name: "Car Purchase", amount: 30000 },
+  { name: "Debt Repayment", amount: 20000 },
+  { name: "Business Startup", amount: 50000 },
+  { name: "Home Renovation", amount: 15000 },
+];
+
+const assetTypes = [
+  { name: "Mutual Funds", avgReturn: 12, percentage: 40 },
+  { name: "Stocks", avgReturn: 10, percentage: 30 },
+  { name: "Government Bonds", avgReturn: 6, percentage: 20 },
+  { name: "Gold", avgReturn: 8, percentage: 10 },
+];
 
 const formatIndianCurrency = (amount) => {
-  const formatter = new Intl.NumberFormat('en-IN', {
-    style: 'currency',
-    currency: 'INR',
+  const formatter = new Intl.NumberFormat("en-IN", {
+    style: "currency",
+    currency: "INR",
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
   });
@@ -54,9 +61,9 @@ const formatToLakhCrore = (value) => {
 };
 
 const FinancialGoalTracker = () => {
-  const [goal, setGoal] = useState('');
-  const [customGoal, setCustomGoal] = useState('');
-  const [amount, setAmount] = useState('');
+  const [goal, setGoal] = useState("");
+  const [customGoal, setCustomGoal] = useState("");
+  const [amount, setAmount] = useState("");
   const [date, setDate] = useState(null);
   const [showResults, setShowResults] = useState(false);
   const [inflationAdjustedAmount, setInflationAdjustedAmount] = useState(0);
@@ -66,28 +73,34 @@ const FinancialGoalTracker = () => {
   const handleGoalChange = (event) => {
     const selectedGoal = event.target.value;
     setGoal(selectedGoal);
-    if (selectedGoal !== 'Other') {
-      const selectedAmount = commonGoals.find(g => g.name === selectedGoal)?.amount || '';
+    if (selectedGoal !== "Other") {
+      const selectedAmount =
+        commonGoals.find((g) => g.name === selectedGoal)?.amount || "";
       setAmount(selectedAmount.toString());
     }
   };
 
   const calculateSIP = (targetAmount, years) => {
     const months = years * 12;
-    const r = assetTypes.reduce((sum, asset) => sum + (asset.avgReturn / 12 / 100 * asset.percentage / 100), 0);
+    const r = assetTypes.reduce(
+      (sum, asset) =>
+        sum + ((asset.avgReturn / 12 / 100) * asset.percentage) / 100,
+      0
+    );
     const sip = targetAmount * (r / (Math.pow(1 + r, months) - 1));
     return sip;
   };
 
   const handleCalculate = () => {
     const inflationRate = 0.03; // 3% annual inflation
-    const years = date ? Math.max(0, date.diff(dayjs(), 'year')) : 0;
-    const inflatedAmount = parseFloat(amount) * Math.pow(1 + inflationRate, years);
+    const years = date ? Math.max(0, date.diff(dayjs(), "year")) : 0;
+    const inflatedAmount =
+      parseFloat(amount) * Math.pow(1 + inflationRate, years);
     setInflationAdjustedAmount(inflatedAmount);
-    
+
     const sip = calculateSIP(inflatedAmount, years);
     setMonthlySIP(sip);
-    
+
     setChartData(generateChartData(inflatedAmount, years, sip));
     setShowResults(true);
   };
@@ -99,9 +112,12 @@ const FinancialGoalTracker = () => {
         month: i,
         total: 0,
       };
-      assetTypes.forEach(asset => {
+      assetTypes.forEach((asset) => {
         const r = asset.avgReturn / 12 / 100;
-        const assetValue = (monthlyInvestment * asset.percentage / 100) * ((Math.pow(1 + r, i) - 1) / r) * (1 + r);
+        const assetValue =
+          ((monthlyInvestment * asset.percentage) / 100) *
+          ((Math.pow(1 + r, i) - 1) / r) *
+          (1 + r);
         monthData[asset.name] = assetValue;
         monthData.total += assetValue;
       });
@@ -115,18 +131,22 @@ const FinancialGoalTracker = () => {
       <Box sx={{ p: 3 }}>
         {!showResults ? (
           <Paper elevation={3} sx={{ p: 3 }}>
-            <Typography variant="h4" gutterBottom>Set Your Financial Goal</Typography>
+            <Typography variant="h4" gutterBottom>
+              Set Your Financial Goal
+            </Typography>
             <FormControl fullWidth margin="normal">
               <InputLabel>Choose your financial goal</InputLabel>
               <Select value={goal} onChange={handleGoalChange}>
                 {commonGoals.map((g) => (
-                  <MenuItem key={g.name} value={g.name}>{g.name}</MenuItem>
+                  <MenuItem key={g.name} value={g.name}>
+                    {g.name}
+                  </MenuItem>
                 ))}
                 <MenuItem value="Other">Other</MenuItem>
               </Select>
             </FormControl>
 
-            {goal === 'Other' && (
+            {goal === "Other" && (
               <TextField
                 fullWidth
                 margin="normal"
@@ -138,7 +158,7 @@ const FinancialGoalTracker = () => {
 
             <motion.div
               initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: goal ? 1 : 0, height: goal ? 'auto' : 0 }}
+              animate={{ opacity: goal ? 1 : 0, height: goal ? "auto" : 0 }}
               transition={{ duration: 0.3 }}
             >
               <TextField
@@ -153,21 +173,23 @@ const FinancialGoalTracker = () => {
                 }}
               />
               <Alert severity="info" sx={{ mt: 2 }}>
-                This is a common amount for your chosen goal. You can adjust it according to your needs.
-                The amount is in today's value.
+                This is a common amount for your chosen goal. You can adjust it
+                according to your needs. The amount is in today's value.
               </Alert>
             </motion.div>
 
             <motion.div
               initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: amount ? 1 : 0, height: amount ? 'auto' : 0 }}
+              animate={{ opacity: amount ? 1 : 0, height: amount ? "auto" : 0 }}
               transition={{ duration: 0.3 }}
             >
               <DatePicker
                 label="Completion Date"
                 value={date}
                 onChange={(newDate) => setDate(newDate)}
-                renderInput={(params) => <TextField {...params} fullWidth margin="normal" />}
+                renderInput={(params) => (
+                  <TextField {...params} fullWidth margin="normal" />
+                )}
                 minDate={dayjs()}
               />
             </motion.div>
@@ -184,29 +206,43 @@ const FinancialGoalTracker = () => {
           </Paper>
         ) : (
           <Paper elevation={3} sx={{ p: 3 }}>
-            <Typography variant="h4" gutterBottom>Your Financial Goal Plan</Typography>
+            <Typography variant="h4" gutterBottom>
+              Your Financial Goal Plan
+            </Typography>
             <Grid container spacing={2}>
               <Grid item xs={12} md={6}>
-                <Typography variant="h6">Goal: {goal === 'Other' ? customGoal : goal}</Typography>
-                <Typography variant="h6">Target Amount: {formatIndianCurrency(amount)}</Typography>
-                <Typography variant="h6">Target Date: {date.format('MMMM D, YYYY')}</Typography>
-                <Typography variant="h6">Inflation Adjusted Amount: {formatIndianCurrency(inflationAdjustedAmount)}</Typography>
+                <Typography variant="h6">
+                  Goal: {goal === "Other" ? customGoal : goal}
+                </Typography>
+                <Typography variant="h6">
+                  Target Amount: {formatIndianCurrency(amount)}
+                </Typography>
+                <Typography variant="h6">
+                  Target Date: {date.format("MMMM D, YYYY")}
+                </Typography>
+                <Typography variant="h6">
+                  Inflation Adjusted Amount:{" "}
+                  {formatIndianCurrency(inflationAdjustedAmount)}
+                </Typography>
                 <Typography variant="h6" color="primary">
                   Required Monthly SIP: {formatIndianCurrency(monthlySIP)}
                 </Typography>
               </Grid>
               <Grid item xs={12} md={6}>
                 <Typography variant="h6">Asset Allocation:</Typography>
-                <Box sx={{ height: 200, width: '100%' }}>
+                <Box sx={{ height: 200, width: "100%" }}>
                   <PieChart
                     series={[
                       {
-                        data: assetTypes.map(asset => ({
+                        data: assetTypes.map((asset) => ({
                           id: asset.name,
                           value: asset.percentage,
-                          label: asset.name
+                          label: asset.name,
                         })),
-                        highlightScope: { faded: 'global', highlighted: 'item' },
+                        highlightScope: {
+                          faded: "global",
+                          highlighted: "item",
+                        },
                         faded: { innerRadius: 30, additionalRadius: -30 },
                       },
                     ]}
@@ -216,34 +252,40 @@ const FinancialGoalTracker = () => {
               </Grid>
             </Grid>
 
-            <Box sx={{ height: 400, mt: 4, width: '100%' }}>
+            <Box sx={{ height: 400, mt: 4, width: "100%" }}>
               <LineChart
-                xAxis={[{ data: chartData.map(d => d.month), label: 'Months' }]}
-                yAxis={[{ 
-                  label: 'Amount',
-                  valueFormatter: (value) => formatToLakhCrore(value),
-                }]}
+                xAxis={[
+                  { data: chartData.map((d) => d.month), label: "Months" },
+                ]}
+                yAxis={[
+                  {
+                    label: "Amount",
+                    valueFormatter: (value) => formatToLakhCrore(value),
+                  },
+                ]}
                 series={[
                   ...assetTypes.map((asset, index) => ({
-                    data: chartData.map(d => d[asset.name]),
+                    data: chartData.map((d) => d[asset.name]),
                     label: asset.name,
-                    color: `hsl(${index * 360 / assetTypes.length}, 70%, 50%)`,
+                    color: `hsl(${
+                      (index * 360) / assetTypes.length
+                    }, 70%, 50%)`,
                     showMark: false,
                     valueFormatter: (value) => formatIndianCurrency(value),
                   })),
                   {
-                    data: chartData.map(d => d.total),
-                    label: 'Total',
-                    color: 'black',
+                    data: chartData.map((d) => d.total),
+                    label: "Total",
+                    color: "black",
                     showMark: false,
                     valueFormatter: (value) => formatIndianCurrency(value),
-                  }
+                  },
                 ]}
                 height={400}
                 slotProps={{
                   legend: {
-                    direction: 'row',
-                    position: { vertical: 'top', horizontal: 'middle' },
+                    direction: "row",
+                    position: { vertical: "top", horizontal: "middle" },
                     padding: 0,
                   },
                 }}
@@ -254,7 +296,9 @@ const FinancialGoalTracker = () => {
               variant="contained"
               color="primary"
               sx={{ mt: 2 }}
-              onClick={() => {/* Redirect to portfolio management page */}}
+              onClick={() => {
+                /* Redirect to portfolio management page */
+              }}
             >
               Go to Investment Portfolio Management
             </Button>

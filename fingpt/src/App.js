@@ -4,6 +4,7 @@ import {
   Route,
   Routes,
   Navigate,
+  useLocation,
 } from "react-router-dom";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
@@ -19,8 +20,9 @@ import ExpenseTracker from "./pages/ExpenseTracker";
 import FinancialGoalTracker from "./pages/FinancialGoalTracker";
 import Navbar from "./components/Navbar/Navbar";
 
-function App() {
+function AppContent() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const location = useLocation();
 
   useEffect(() => {
     const user = isAuthenticated();
@@ -42,37 +44,47 @@ function App() {
     setIsLoggedIn(true);
   };
 
+  const showNavbar = !["/login", "/register"].includes(location.pathname);
+
+  return (
+    <>
+      {showNavbar && <Navbar isLoggedIn={isLoggedIn} onLogout={handleLogout} />}
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route
+          path="/login"
+          element={
+            isLoggedIn ? (
+              <Navigate to="/home" />
+            ) : (
+              <Login onLogin={handleLogin} />
+            )
+          }
+        />
+        <Route
+          path="/register"
+          element={<SignUp onRegister={handleRegister} />}
+        />
+        <Route
+          path="/home"
+          element={isLoggedIn ? <Home /> : <Navigate to="/login" />}
+        />
+        <Route path="/budget" element={<BudgetOptimizer />} />
+        <Route path="/creditscore" element={<CreditScore />} />
+        <Route path="/debt" element={<DebtPayoffCalculator />} />
+        <Route path="/expensetracker" element={<ExpenseTracker />} />
+        <Route path="/goal" element={<FinancialGoalTracker />} />
+      </Routes>
+    </>
+  );
+}
+
+function App() {
   return (
     <ThemeContextProvider>
       <CssBaseline />
       <Router>
-        <Navbar isLoggedIn={isLoggedIn} onLogout={handleLogout} />
-        <Routes>
-          <Route path="/" element={<LandingPage />} />
-          <Route
-            path="/login"
-            element={
-              isLoggedIn ? (
-                <Navigate to="/home" />
-              ) : (
-                <Login onLogin={handleLogin} />
-              )
-            }
-          />
-          <Route
-            path="/register"
-            element={<SignUp onRegister={handleRegister} />}
-          />
-          <Route
-            path="/home"
-            element={isLoggedIn ? <Home /> : <Navigate to="/login" />}
-          />
-          <Route path="/budget" element={<BudgetOptimizer />}></Route>
-          <Route path="/creditscore" element={<CreditScore />}></Route>
-          <Route path="/debt" element={<DebtPayoffCalculator />} />
-          <Route path="/expensetracker" element={<ExpenseTracker />}></Route>
-          <Route path="/goal" element={<FinancialGoalTracker />}></Route>
-        </Routes>
+        <AppContent />
       </Router>
     </ThemeContextProvider>
   );
