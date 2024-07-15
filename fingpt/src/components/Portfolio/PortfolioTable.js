@@ -25,13 +25,13 @@ function PortfolioTable({ portfolio }) {
               <TableCell>{stock.symbol}</TableCell>
               <TableCell>{stock.name}</TableCell>
               <TableCell align="right">{stock.quantity}</TableCell>
-              <TableCell align="right">${stock.price.toFixed(2)}</TableCell>
-              <TableCell align="right">${stock.total.toFixed(2)}</TableCell>
+              <TableCell align="right">₹{stock.price.toFixed(2)}</TableCell>
+              <TableCell align="right">₹{stock.total.toFixed(2)}</TableCell>
             </TableRow>
           ))}
           <TableRow>
             <TableCell colSpan={4} align="right">Total Portfolio Value:</TableCell>
-            <TableCell align="right">${calculateTotal().toFixed(2)}</TableCell>
+            <TableCell align="right">₹{calculateTotal().toFixed(2)}</TableCell>
           </TableRow>
         </TableBody>
       </Table>

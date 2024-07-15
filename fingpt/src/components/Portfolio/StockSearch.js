@@ -9,7 +9,7 @@ function StockSearch({ onSelectStock }) {
   const [searchResults, setSearchResults] = useState([]);
 
   const handleSearch = async () => {
-    console.log(`API Request: Searching for stock with keyword "${searchTerm}"`);
+    console.log(`API Request: Searching for stock with keyword "${searchTerm} "`, API_KEY);
     try {
       const response = await axios.get(
         `https://www.alphavantage.co/query?function=SYMBOL_SEARCH&keywords=${searchTerm}&apikey=${API_KEY}`
@@ -34,20 +34,22 @@ function StockSearch({ onSelectStock }) {
       <Button variant="contained" onClick={handleSearch} sx={{ mb: 2 }}>
         Search
       </Button>
-      <List>
-        {searchResults.map((result) => (
-          <ListItem
-            key={result['1. symbol']}
-            button
-            onClick={() => onSelectStock(result['1. symbol'])}
-          >
-            <ListItemText
-              primary={result['2. name']}
-              secondary={result['1. symbol']}
-            />
-          </ListItem>
-        ))}
-      </List>
+      <Box sx={{ maxHeight: '165px', overflowY: 'auto' }}>
+        <List>
+          {searchResults.map((result) => (
+            <ListItem
+              key={result['1. symbol']}
+              button
+              onClick={() => onSelectStock(result['1. symbol'])}
+            >
+              <ListItemText
+                primary={result['2. name']}
+                secondary={result['1. symbol']}
+              />
+            </ListItem>
+          ))}
+        </List>
+      </Box>
     </Box>
   );
 }

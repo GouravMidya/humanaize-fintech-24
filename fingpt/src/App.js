@@ -73,7 +73,7 @@ function AppContent() {
         <Route path="/budget" element={<BudgetOptimizer />} />
         <Route path="/creditscore" element={<CreditScore />} />
         <Route path="/debt" element={<DebtPayoffCalculator />} />
-        <Route path="/expensetracker" element={<ExpenseTracker />} />
+        <Route path="/expensetracker" element={isLoggedIn ? <ExpenseTracker /> : <Navigate to="/login" />} />
         <Route path="/goal" element={<FinancialGoalTracker />} />
         <Route path="/investment" element={<InvestmentPortfolio/>}/>
       </Routes>

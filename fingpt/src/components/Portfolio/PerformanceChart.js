@@ -3,54 +3,106 @@ import { Typography, Select, MenuItem, FormControl, InputLabel, Box } from '@mui
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import axios from 'axios';
 
-const API_KEY = 'VSOEVEZQ4OB4RC7D';
+const API_KEY = process.env.REACT_APP_ALPHA_VANTAGE_API_KEY;
 
 function PerformanceChart({ portfolio = [] }) {
   const [selectedStock, setSelectedStock] = useState('');
   const [timeRange, setTimeRange] = useState(30);
   const [chartData, setChartData] = useState([]);
-  const [outputSize, setOutputSize] = useState('compact'); // Default to 'compact'
 
   useEffect(() => {
     const fetchData = async () => {
       if (selectedStock) {
-        console.log(`API Request: Fetching daily adjusted data for ${selectedStock} with output size ${outputSize}`);
+        console.log(`API Request: Fetching EOD data for ${selectedStock}`);
         try {
           const response = await axios.get(
-            `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=${selectedStock}&outputsize=${outputSize}&apikey=${API_KEY}`
+            `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&outputsize=full&symbol=${selectedStock}&apikey=${API_KEY}&datatype=csv`,
+            { responseType: 'text' }
           );
-          console.log(response);
+          
+          const rows = response.data.trim().split('\n');
+          const headers = rows.shift().split(',');
+          
+          const data = rows
+            .map(row => {
+              const values = row.split(',');
+              return headers.reduce((obj, header, index) => {
+                obj[header] = values[index];
+                return obj;
+              }, {});
+            })
+            .slice(0, timeRange)
+            .map(item => ({
+              date: item.timestamp,
+              price: parseFloat(item.close)
+            }))
+            .reverse();
 
-          if (response.data['Time Series (Daily)']) {
-            const timeSeriesData = response.data['Time Series (Daily)'];
-            const data = Object.entries(timeSeriesData)
-              .slice(0, timeRange)
-              .map(([date, values]) => ({
-                date,
-                price: parseFloat(values['4. close'])
-              }))
-              .reverse();
-            setChartData(data);
-          } else {
-            console.error('Unexpected API response format:', response.data);
-            setChartData([]);
-          }
+          console.log("Parsed Chart Data:", data);
+          setChartData(data);
         } catch (error) {
           console.error('Error fetching stock data:', error);
           setChartData([]);
         }
       } else {
-        // Placeholder for portfolio performance
-        const data = Array.from({ length: timeRange }, (_, i) => ({
-          date: new Date(Date.now() - (timeRange - 1 - i) * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-          price: Math.random() * 1000 + 500
-        }));
-        setChartData(data);
+        // Fetch data for all stocks in the portfolio
+        try {
+          const allStockData = await Promise.all(
+            portfolio.map(async (stock) => {
+              const response = await axios.get(
+                `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&outputsize=full&symbol=${stock.symbol}&apikey=${API_KEY}&datatype=csv`,
+                { responseType: 'text' }
+              );
+              
+              const rows = response.data.trim().split('\n');
+              const headers = rows.shift().split(',');
+              
+              return rows
+                .map(row => {
+                  const values = row.split(',');
+                  return headers.reduce((obj, header, index) => {
+                    obj[header] = values[index];
+                    return obj;
+                  }, {});
+                })
+                .slice(0, timeRange)
+                .map(item => ({
+                  date: item.timestamp,
+                  [stock.symbol]: parseFloat(item.close) * stock.quantity
+                }))
+                .reverse();
+            })
+          );
+
+          // Combine data from all stocks
+          const combinedData = allStockData.reduce((acc, stockData) => {
+            stockData.forEach((dataPoint, index) => {
+              if (!acc[index]) {
+                acc[index] = { date: dataPoint.date, totalValue: 0 };
+              }
+              acc[index].totalValue += Object.values(dataPoint)[1];
+            });
+            return acc;
+          }, []);
+
+          setChartData(combinedData);
+        } catch (error) {
+          console.error('Error fetching portfolio data:', error);
+          setChartData([]);
+        }
       }
     };
 
     fetchData();
-  }, [selectedStock, timeRange, outputSize, portfolio]);
+  }, [selectedStock, timeRange, portfolio]);
+
+  const getExplanation = () => {
+    if (selectedStock) {
+      return `This chart shows the daily closing price of ${selectedStock} over the selected time period. It reflects the stock's price performance and can help you understand its recent trends.`;
+    } else {
+      return `This chart displays the total value of your entire portfolio over the selected time period. It combines the performance of all stocks in your portfolio, weighted by the number of shares you own of each stock. This gives you a comprehensive view of how your entire investment portfolio has performed over time.`;
+    }
+  };
 
   if (portfolio.length === 0) {
     return (
@@ -62,16 +114,20 @@ function PerformanceChart({ portfolio = [] }) {
 
   return (
     <Box>
+      <Typography variant="h6" color="primary" gutterBottom>
+        Performance Chart
+      </Typography>
       <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-        This chart shows the performance of {selectedStock ? `${selectedStock}` : 'your entire portfolio'} over time.
+        {getExplanation()}
       </Typography>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
-        <FormControl sx={{ minWidth: 120 }}>
-          <InputLabel>Stock</InputLabel>
+        <FormControl sx={{ minWidth: '120px' }}>
+          <InputLabel sx={{ width: '120px' }}>AllPortfolio</InputLabel>
           <Select
             value={selectedStock}
             onChange={(e) => setSelectedStock(e.target.value)}
             label="Stock"
+            sx={{ width: '120px' }}
           >
             <MenuItem value="">All Portfolio</MenuItem>
             {portfolio.map((stock) => (
@@ -90,18 +146,6 @@ function PerformanceChart({ portfolio = [] }) {
             <MenuItem value={30}>1 Month</MenuItem>
             <MenuItem value={90}>3 Months</MenuItem>
             <MenuItem value={180}>6 Months</MenuItem>
-            <MenuItem value={365}>1 Year</MenuItem>
-          </Select>
-        </FormControl>
-        <FormControl sx={{ minWidth: 120 }}>
-          <InputLabel>Output Size</InputLabel>
-          <Select
-            value={outputSize}
-            onChange={(e) => setOutputSize(e.target.value)}
-            label="Output Size"
-          >
-            <MenuItem value="compact">Compact</MenuItem>
-            <MenuItem value="full">Full</MenuItem>
           </Select>
         </FormControl>
       </Box>
@@ -117,10 +161,22 @@ function PerformanceChart({ portfolio = [] }) {
         >
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="date" allowDuplicatedCategory={false} />
-          <YAxis allowDecimals={true} domain={['auto', 'auto']} />
-          <Tooltip />
+          <YAxis 
+            allowDecimals={true} 
+            domain={['auto', 'auto']} 
+            tickFormatter={(value) => `₹${value.toLocaleString('en-IN', { maximumFractionDigits: 0 })}`}
+          />
+          <Tooltip 
+            formatter={(value) => [`₹${value.toLocaleString('en-IN', { maximumFractionDigits: 2 })}`, selectedStock ? "Price" : "Portfolio Value"]}
+          />
           <Legend />
-          <Line type="monotone" dataKey="price" stroke="#8884d8" activeDot={{ r: 8 }} name={selectedStock || "Portfolio Value"} />
+          <Line 
+            type="monotone" 
+            dataKey={selectedStock ? "price" : "totalValue"} 
+            stroke="#8884d8" 
+            activeDot={{ r: 8 }} 
+            name={selectedStock || "Portfolio Value"} 
+          />
         </LineChart>
       </ResponsiveContainer>
     </Box>

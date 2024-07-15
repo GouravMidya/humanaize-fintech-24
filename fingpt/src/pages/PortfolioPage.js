@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Grid, Paper, Typography } from '@mui/material';
+import { Container, Grid, Paper, Typography, Box } from '@mui/material';
 import axios from 'axios';
 import StockSearch from '../components/Portfolio/StockSearch';
 import StockDetails from '../components/Portfolio/StockDetails';
 import AddToPortfolioForm from '../components/Portfolio/AddToPortfolioForm';
 import PortfolioTable from '../components/Portfolio/PortfolioTable';
 import NewsWidget from '../components/Portfolio/NewsWidget';
-import AssetAllocation from '../components/Portfolio/AssetAllocation';
 import PerformanceChart from '../components/Portfolio/PerformanceChart';
 
 const NEWS_API_KEY = process.env.REACT_APP_NEWS_API_KEY;
@@ -69,21 +68,22 @@ function PortfolioPage() {
   return (
     <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
       <Grid container spacing={3}>
+        {/* Stock Search and Details */}
         <Grid item xs={12} md={6}>
-          <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column', height: '100%' }}>
-            <Typography variant="h6" gutterBottom>
+          <Paper sx={{ p: 3, height: '100%' }}>
+            <Typography variant="h5" gutterBottom>
               Search Stocks
             </Typography>
             <StockSearch onSelectStock={handleSelectStock} />
           </Paper>
         </Grid>
         <Grid item xs={12} md={6}>
-          <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column', height: '100%' }}>
-            <Typography variant="h6" gutterBottom>
+          <Paper sx={{ p: 3, height: '100%' }}>
+            <Typography variant="h5" gutterBottom>
               Stock Details
             </Typography>
             {selectedStock && (
-              <>
+              <Box>
                 <StockDetails 
                   symbol={selectedStock} 
                   onStockDataUpdate={handleStockDataUpdate}
@@ -94,37 +94,40 @@ function PortfolioPage() {
                     onAddToPortfolio={handleAddToPortfolio}
                   />
                 )}
-              </>
+              </Box>
             )}
           </Paper>
         </Grid>
+
+        {/* Portfolio Table */}
         <Grid item xs={12}>
-          <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
-            <Typography variant="h6" gutterBottom>
+          <Paper sx={{ p: 3 }}>
+            <Typography variant="h5" gutterBottom>
               Your Portfolio
             </Typography>
             <PortfolioTable portfolio={portfolio} />
           </Paper>
         </Grid>
-        <Grid item xs={12} md={6}>
-          <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column', height: '100%' }}>
-            <AssetAllocation data={portfolio} />
-          </Paper>
-        </Grid>
-        <Grid item xs={12} md={6}>
-          <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column', height: '100%' }}>
-            <NewsWidget news={newsData} />
-          </Paper>
-        </Grid>
-        <Grid item xs={12}>
-          <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
-            <Typography variant="h6" gutterBottom>
+
+        {/* Performance Chart (8 units) and News Widget (4 units) */}
+        <Grid item xs={12} md={8}>
+          <Paper sx={{ p: 3, height: '100%' }}>
+            <Typography variant="h5" gutterBottom>
               Portfolio Performance
             </Typography>
             <PerformanceChart portfolio={portfolio} />
           </Paper>
         </Grid>
+        <Grid item xs={12} md={4}>
+          <Paper sx={{ p: 3, height: '100%' }}>
+            <Typography variant="h5" gutterBottom sx={{textAlign: 'center',textDecoration:'underline', marginBottom:'10px'}}>
+              Latest Business News
+            </Typography>
+            <NewsWidget news={newsData} />
+          </Paper>
+        </Grid>
       </Grid>
+      <br/>
     </Container>
   );
 }
