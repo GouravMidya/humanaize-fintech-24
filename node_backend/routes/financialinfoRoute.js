@@ -10,9 +10,9 @@ import {
 
 const router = Router();
 
-router.post('/financeInfo', addFinancialInfo);
-router.get('/financeInfo', getFinancialInfoByUserId); // Use query parameter for userId
-router.put('/financeInfo', updateFinancialInfo);
-router.delete('/financeInfo', deleteFinancialInfo);
+router.post('/', addFinancialInfo);
+router.get('/', getFinancialInfoByUserId); // Use query parameter for userId
+router.put('/', updateFinancialInfo);
+router.delete('/', deleteFinancialInfo);
 
 export default router;

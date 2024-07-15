@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 import mongoose from "mongoose";
 import cors from "cors";
 import authRoute from "./routes/authRoute.js";
-import financialinfoRoute from "./routes/financialinfoRoute.js";
+import financialinfoRoute from "./routes/financialInfoRoute.js";
 import cookieParser from "cookie-parser";
 import expenseRoutes from "./routes/expenseRoutes.js";
 
