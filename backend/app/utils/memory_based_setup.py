@@ -14,13 +14,24 @@ import os
 from app.config import FOLDER_PATH,MONGO_DB_URL
 
 # Connect to MongoDB 
-mongo_client = MongoClient(os.getenv("MONGODB_URI"))  
-db = mongo_client["chat_db"]
+mongo_client = MongoClient(os.getenv("MONGODB_URI"))
+db = mongo_client["chat_db"]  
+db2 = mongo_client["test"]
 collection = db["chat_history"]
-
+financial_info_collection = db2["financialinfos"]
+from bson.objectid import ObjectId
 # Statefully manage chat history
 store = {}
     
+def get_financial_info(user_id):
+    obj_id = ObjectId(user_id)
+    financial_info = financial_info_collection.find_one({"userId": obj_id})
+    if financial_info:
+        # Remove MongoDB-specific fields
+        financial_info.pop('_id', None)
+        return financial_info
+    return None
+
 def get_session_history(session_id: str) -> BaseChatMessageHistory:
     if session_id not in store:
         # Load history from MongoDB
@@ -80,12 +91,32 @@ def setup_mem_components():
     )
 
     # Answer question
-    qa_system_prompt = """You are a personal financial planning assistant for question-answering tasks.
+    qa_system_prompt = """You are a personal financial planning assistant in India for question-answering tasks.
         Use the following pieces of retrieved context to answer the question
-        meaningfully. If you don't know the answer, just respond with 'no answer'.
+        meaningfully. If you don't know the answer, just say you don't have enough information.
         Use six sentences maximum and keep the answer concise.
         
-        {context}"""
+        Always consider the user's financial information when answering:
+        Monthly Income: {monthly_income}
+        Monthly Expenses: {monthly_expenses}
+        Short Term Goals: {short_term_goals}
+        Long Term Goals: {long_term_goals}
+        Risk Tolerance: {risk_tolerance}
+        Age: {age}
+        
+        Tailor your advice based on this information. For example:
+        - If the user has a low risk tolerance, suggest more conservative investments.
+        - If the user is young, you might recommend more aggressive long-term strategies.
+        - Consider their income and expenses when suggesting savings strategies.
+        - Align your advice with their short-term and long-term goals.
+        - If any information is missing, acknowledge it and provide general advice.
+        
+        Retrieved context:
+        {context}
+        
+        Remember to always personalize your response based on the user's specific financial situation.
+        If you're asked about something unrelated to finance, politely redirect the conversation to financial topics."""
+    print(qa_system_prompt)
     qa_prompt = ChatPromptTemplate.from_messages(
         [
             ("system", qa_system_prompt),
@@ -93,6 +124,7 @@ def setup_mem_components():
             ("human", "{input}"),
         ]
     )
+    
     question_answer_chain = create_stuff_documents_chain(llm, qa_prompt)
 
     rag_chain = create_retrieval_chain(history_aware_retriever, question_answer_chain)

@@ -1,5 +1,3 @@
-// services/handleSend.js
-
 import axios from 'axios';
 
 // Utility function to capitalize the first letter
@@ -7,7 +5,7 @@ const capitalizeFirstLetter = (string) => {
     return string.charAt(0).toUpperCase() + string.slice(1);
 };
 
-const handleSend = async (input, currentConversationId, setConversations, setIsSending, setInput) => {
+const handleSend = async (input, currentConversationId, setConversations, setIsSending, setInput, userId) => {
     if (input.trim()) {
         const newMessage = { sender: 'user', text: input };
         setConversations((prevConversations) =>
@@ -26,7 +24,11 @@ const handleSend = async (input, currentConversationId, setConversations, setIsS
 
         // Send user input to the backend API
         try {
-            const response = await axios.post(`${process.env.REACT_APP_FASTURL}/api/query`, { query: input, sessionId: currentConversationId });
+            const response = await axios.post(`${process.env.REACT_APP_FASTURL}/api/query`, { 
+                query: input, 
+                sessionId: currentConversationId,
+                userId: userId
+            });
             const capitalizedBotResponse = capitalizeFirstLetter(response.data.response);
             const botMessage = { sender: 'bot', text: capitalizedBotResponse, sessionId: response.data.sessionId };
             setConversations((prevConversations) =>

@@ -17,6 +17,7 @@ import favicon from "../Chatbot/favicon.ico"; // Adjust the path as necessary
 import handleSend from "../../services/handleSend"; // Import the handleSend function
 import CloseIcon from "@mui/icons-material/Close";
 import AddCommentIcon from "@mui/icons-material/AddComment";
+import { getUsername } from "../../services/authServices";
 
 const Chatbot = ({ initialMessage }) => {
   const [conversations, setConversations] = useState([
@@ -31,6 +32,19 @@ const Chatbot = ({ initialMessage }) => {
   const [showQuestions, setShowQuestions] = useState(true); // State to manage the visibility of questions
   const [randomQuestions, setRandomQuestions] = useState([]); // State to store the randomized questions
   const [isToggled, setIsToggled] = useState(false); // State to manage button toggle
+  const [userId, setUserId] = useState("");
+
+  useEffect(() => {
+    const fetchUserId = async () => {
+      try {
+        const { userId } = await getUsername(); // Assuming this function returns an object with userId
+        setUserId(userId);
+      } catch (error) {
+        console.error("Error fetching user ID:", error);
+      }
+    };
+    fetchUserId();
+  }, []);
 
   const questions = useMemo(
     () => [
@@ -73,17 +87,18 @@ const Chatbot = ({ initialMessage }) => {
   }, [getRandomQuestions]);
 
   const onSend = async (message) => {
-    setIsSending((prev) => ({ ...prev, [currentConversationId]: true }));
-    await handleSend(
-      message || input,
-      currentConversationId,
-      setConversations,
-      setIsSending,
-      setInput
-    );
-    setShowQuestions(false); // Hide questions when a message is sent
-    setIsSending((prev) => ({ ...prev, [currentConversationId]: false }));
-  };
+  setIsSending((prev) => ({ ...prev, [currentConversationId]: true }));
+  await handleSend(
+    message || input,
+    currentConversationId,
+    setConversations,
+    setIsSending,
+    setInput,
+    userId // Add this line
+  );
+  setShowQuestions(false);
+  setIsSending((prev) => ({ ...prev, [currentConversationId]: false }));
+};
 
   const handleNewConversation = () => {
     const newId = uuidv4();
@@ -190,7 +205,6 @@ const Chatbot = ({ initialMessage }) => {
           {currentMessages.map((msg, index) => (
             <Message key={index} sender={msg.sender} text={msg.text} />
           ))}
-          {currentMessages.map((msg) => console.log(msg.text))}
         </Box>
         <div style={{ display: "flex", justifyContent: "center" }}>
           {showQuestions && (
