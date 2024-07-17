@@ -1,8 +1,11 @@
-import axios from 'axios';
+import axios from "axios";
 
 const signUp = async (formData) => {
   try {
-    const response = await axios.post(`${process.env.REACT_APP_NODEURL}/api/auth/signup`, formData);
+    const response = await axios.post(
+      `${process.env.REACT_APP_NODEURL}/api/auth/signup`,
+      formData
+    );
     return response.data;
   } catch (err) {
     throw err;
@@ -12,7 +15,10 @@ const signUp = async (formData) => {
 const login = async (formData) => {
   try {
     console.log(formData);
-    const response = await axios.post(`${process.env.REACT_APP_NODEURL}/api/auth/login`, formData);
+    const response = await axios.post(
+      `${process.env.REACT_APP_NODEURL}/api/auth/login`,
+      formData
+    );
     console.log(response.data);
     return response.data;
   } catch (err) {
@@ -22,7 +28,10 @@ const login = async (formData) => {
 
 export const checkEmail = async (email) => {
   try {
-    const response = await axios.post(`${process.env.REACT_APP_NODEURL}/api/auth/check-email`, { email });
+    const response = await axios.post(
+      `${process.env.REACT_APP_NODEURL}/api/auth/check-email`,
+      { email }
+    );
     return response.data;
   } catch (err) {
     throw err;
@@ -30,17 +39,20 @@ export const checkEmail = async (email) => {
 };
 export const getUsername = async () => {
   try {
-    const token = localStorage.getItem('jwt');
+    const token = localStorage.getItem("jwt");
 
     if (!token) {
-      throw new Error('No token available');
+      throw new Error("No token available");
     }
 
-    const response = await axios.get(`${process.env.REACT_APP_NODEURL}/api/auth/user-details`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const response = await axios.get(
+      `${process.env.REACT_APP_NODEURL}/api/auth/user-details`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
     console.log(response.data);
     return response.data;
   } catch (error) {

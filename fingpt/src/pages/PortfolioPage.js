@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import { Container, Grid, Paper, Typography, Box } from '@mui/material';
-import axios from 'axios';
-import StockSearch from '../components/Portfolio/StockSearch';
-import StockDetails from '../components/Portfolio/StockDetails';
-import AddToPortfolioForm from '../components/Portfolio/AddToPortfolioForm';
-import PortfolioTable from '../components/Portfolio/PortfolioTable';
-import NewsWidget from '../components/Portfolio/NewsWidget';
-import PerformanceChart from '../components/Portfolio/PerformanceChart';
-import { getUsername } from '../services/authServices';
+import React, { useState, useEffect } from "react";
+import { Container, Grid, Paper, Typography, Box } from "@mui/material";
+import axios from "axios";
+import StockSearch from "../components/Portfolio/StockSearch";
+import StockDetails from "../components/Portfolio/StockDetails";
+import AddToPortfolioForm from "../components/Portfolio/AddToPortfolioForm";
+import PortfolioTable from "../components/Portfolio/PortfolioTable";
+import NewsWidget from "../components/Portfolio/NewsWidget";
+import PerformanceChart from "../components/Portfolio/PerformanceChart";
+import { getUsername } from "../services/authServices";
 const NEWS_API_KEY = process.env.REACT_APP_NEWS_API_KEY;
 
 function PortfolioPage() {
@@ -28,7 +28,6 @@ function PortfolioPage() {
       }
     };
     fetchUserDetailsAndPortfolio();
-
   }, []);
 
   useEffect(() => {
@@ -39,7 +38,7 @@ function PortfolioPage() {
         );
         setNewsData(newsResponse.data.articles.slice(0, 5));
       } catch (error) {
-        console.error('Error fetching news:', error);
+        console.error("Error fetching news:", error);
       }
     };
 
@@ -60,27 +59,74 @@ function PortfolioPage() {
       return;
     }
     try {
-      const response = await axios.post(`${process.env.REACT_APP_NODEURL}/api/portfolio/`, {
-        userId: userId,
-        symbol: stock.symbol,
-        name: stock.name,
-        quantity: parseInt(stock.quantity),
-        buyPrice: parseFloat(stock.price)
-      });
+      const response = await axios.post(
+        `${process.env.REACT_APP_NODEURL}/api/portfolio/`,
+        {
+          userId: userId,
+          symbol: stock.symbol,
+          name: stock.name,
+          quantity: parseInt(stock.quantity),
+          buyPrice: parseFloat(stock.price),
+        }
+      );
       setPortfolio(response.data);
     } catch (error) {
-      console.error('Error adding stock to portfolio:', error);
+      console.error("Error adding stock to portfolio:", error);
     }
   };
 
   const fetchPortfolio = async (userId) => {
     try {
-      const response = await axios.get(`${process.env.REACT_APP_NODEURL}/api/portfolio/`, { params: {
-        userId: userId,
-      }, });
+      const response = await axios.get(
+        `${process.env.REACT_APP_NODEURL}/api/portfolio/`,
+        {
+          params: {
+            userId: userId,
+          },
+        }
+      );
       setPortfolio(response.data);
     } catch (error) {
-      console.error('Error fetching portfolio:', error);
+      console.error("Error fetching portfolio:", error);
+    }
+  };
+
+  const handleUpdateStock = async (stockId, updatedData) => {
+    if (!userId) {
+      console.error("User ID not available");
+      return;
+    }
+    try {
+      const response = await axios.put(
+        `${process.env.REACT_APP_NODEURL}/api/portfolio/`,
+        {
+          userId: userId,
+          stockId: stockId,
+          quantity: parseInt(updatedData.quantity),
+          buyPrice: parseFloat(updatedData.buyPrice),
+        }
+      );
+      setPortfolio(response.data);
+    } catch (error) {
+      console.error("Error updating stock in portfolio:", error);
+    }
+  };
+
+  const handleDeleteStock = async (stockId) => {
+    if (!userId) {
+      console.error("User ID not available");
+      return;
+    }
+    try {
+      const response = await axios.delete(
+        `${process.env.REACT_APP_NODEURL}/api/portfolio/`,
+        {
+          data: { userId: userId, stockId: stockId },
+        }
+      );
+      setPortfolio(response.data);
+    } catch (error) {
+      console.error("Error deleting stock from portfolio:", error);
     }
   };
 
@@ -89,7 +135,7 @@ function PortfolioPage() {
       <Grid container spacing={3}>
         {/* Stock Search and Details */}
         <Grid item xs={12} md={6}>
-          <Paper sx={{ p: 3, height: '100%' }}>
+          <Paper sx={{ p: 3, height: "100%" }}>
             <Typography variant="h5" gutterBottom>
               Search Stocks
             </Typography>
@@ -97,14 +143,14 @@ function PortfolioPage() {
           </Paper>
         </Grid>
         <Grid item xs={12} md={6}>
-          <Paper sx={{ p: 3, height: '100%' }}>
+          <Paper sx={{ p: 3, height: "100%" }}>
             <Typography variant="h5" gutterBottom>
               Stock Details
             </Typography>
             {selectedStock && (
               <Box>
-                <StockDetails 
-                  symbol={selectedStock} 
+                <StockDetails
+                  symbol={selectedStock}
                   onStockDataUpdate={handleStockDataUpdate}
                 />
                 {selectedStockData && (
@@ -124,13 +170,17 @@ function PortfolioPage() {
             <Typography variant="h5" gutterBottom>
               Your Portfolio
             </Typography>
-            <PortfolioTable portfolio={portfolio} />
+            <PortfolioTable
+              portfolio={portfolio}
+              onUpdateStock={handleUpdateStock}
+              onDeleteStock={handleDeleteStock}
+            />
           </Paper>
         </Grid>
 
         {/* Performance Chart (8 units) and News Widget (4 units) */}
         <Grid item xs={12} md={8}>
-          <Paper sx={{ p: 3, height: '100%' }}>
+          <Paper sx={{ p: 3, height: "100%" }}>
             <Typography variant="h5" gutterBottom>
               Portfolio Performance
             </Typography>
@@ -138,15 +188,23 @@ function PortfolioPage() {
           </Paper>
         </Grid>
         <Grid item xs={12} md={4}>
-          <Paper sx={{ p: 3, height: '100%' }}>
-            <Typography variant="h5" gutterBottom sx={{textAlign: 'center',textDecoration:'underline', marginBottom:'10px'}}>
+          <Paper sx={{ p: 3, height: "100%" }}>
+            <Typography
+              variant="h5"
+              gutterBottom
+              sx={{
+                textAlign: "center",
+                textDecoration: "underline",
+                marginBottom: "10px",
+              }}
+            >
               Latest Business News
             </Typography>
             <NewsWidget news={newsData} />
           </Paper>
         </Grid>
       </Grid>
-      <br/>
+      <br />
     </Container>
   );
 }
