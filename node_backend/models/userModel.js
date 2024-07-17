@@ -36,6 +36,10 @@ const userSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "FinancialInfo",
   },
+  debts: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Debt"
+  }]
 });
 
 userSchema.pre("save", async function () {
