@@ -144,8 +144,9 @@ const BudgetOptimizer = () => {
     }
 
     try {
+      console.log("Fetched exepense",userId);
       const response = await axios.post(
-        `${process.env.REACT_APP_NODEURL}/getexpensesdaterange`,
+        `${process.env.REACT_APP_NODEURL}/api/expense/getexpensesdaterange`,
         {
           userId,
           startDate: dateRange.start,
@@ -153,7 +154,7 @@ const BudgetOptimizer = () => {
         }
       );
       const fetchedExpenses = response.data;
-
+     
       const totalIncome = incomes.reduce(
         (sum, income) => sum + Number(income.amount),
         0

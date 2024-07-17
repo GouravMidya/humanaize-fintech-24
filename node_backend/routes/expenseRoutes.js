@@ -5,10 +5,10 @@ import { addExpense, getExpenses, updateExpense, deleteExpense, getExpensesByDat
 const router = express.Router();
 
 // Route to add a new expense
-router.post('/expenses', addExpense);
+router.post('/', addExpense);
 
 // Route to get all expenses
-router.post('/getexpenses',getExpenses);
+router.post('/getexpense',getExpenses);
 
 // Route to update an expense by id
 router.put('/expenses/update/:id',updateExpense);

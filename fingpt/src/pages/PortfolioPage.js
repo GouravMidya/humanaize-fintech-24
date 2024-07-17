@@ -7,7 +7,7 @@ import AddToPortfolioForm from '../components/Portfolio/AddToPortfolioForm';
 import PortfolioTable from '../components/Portfolio/PortfolioTable';
 import NewsWidget from '../components/Portfolio/NewsWidget';
 import PerformanceChart from '../components/Portfolio/PerformanceChart';
-
+import { getUsername } from '../services/authServices';
 const NEWS_API_KEY = process.env.REACT_APP_NEWS_API_KEY;
 
 function PortfolioPage() {
@@ -15,10 +15,24 @@ function PortfolioPage() {
   const [selectedStockData, setSelectedStockData] = useState(null);
   const [portfolio, setPortfolio] = useState([]);
   const [newsData, setNewsData] = useState([]);
+  const [userId, setUserId] = useState(""); // Replace with actual user authentication
+
+  useEffect(() => {
+    const fetchUserDetailsAndPortfolio = async () => {
+      try {
+        const { userId } = await getUsername();
+        setUserId(userId);
+        await fetchPortfolio(userId);
+      } catch (error) {
+        console.error("Error fetching user details:", error);
+      }
+    };
+    fetchUserDetailsAndPortfolio();
+
+  }, []);
 
   useEffect(() => {
     const fetchNews = async () => {
-      console.log('API Request: Fetching latest business news');
       try {
         const newsResponse = await axios.get(
           `https://newsapi.org/v2/top-headlines?country=in&category=business&apiKey=${NEWS_API_KEY}`
@@ -40,29 +54,34 @@ function PortfolioPage() {
     setSelectedStockData(data);
   };
 
-
-  const handleAddToPortfolio = (stock) => {
-    setPortfolio((prevPortfolio) => {
-      const existingStockIndex = prevPortfolio.findIndex((s) => s.symbol === stock.symbol);
-      const newStock = {
-        ...stock,
-        price: parseFloat(stock.price),
+  const handleAddToPortfolio = async (stock) => {
+    if (!userId) {
+      console.error("User ID not available");
+      return;
+    }
+    try {
+      const response = await axios.post(`${process.env.REACT_APP_NODEURL}/api/portfolio/`, {
+        userId: userId,
+        symbol: stock.symbol,
+        name: stock.name,
         quantity: parseInt(stock.quantity),
-        total: parseFloat(stock.price) * parseInt(stock.quantity)
-      };
-      
-      if (existingStockIndex !== -1) {
-        const updatedPortfolio = [...prevPortfolio];
-        updatedPortfolio[existingStockIndex] = {
-          ...updatedPortfolio[existingStockIndex],
-          quantity: updatedPortfolio[existingStockIndex].quantity + newStock.quantity,
-          total: updatedPortfolio[existingStockIndex].total + newStock.total
-        };
-        return updatedPortfolio;
-      } else {
-        return [...prevPortfolio, newStock];
-      }
-    });
+        buyPrice: parseFloat(stock.price)
+      });
+      setPortfolio(response.data);
+    } catch (error) {
+      console.error('Error adding stock to portfolio:', error);
+    }
+  };
+
+  const fetchPortfolio = async (userId) => {
+    try {
+      const response = await axios.get(`${process.env.REACT_APP_NODEURL}/api/portfolio/`, { params: {
+        userId: userId,
+      }, });
+      setPortfolio(response.data);
+    } catch (error) {
+      console.error('Error fetching portfolio:', error);
+    }
   };
 
   return (

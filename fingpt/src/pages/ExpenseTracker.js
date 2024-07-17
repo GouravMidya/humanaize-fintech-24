@@ -88,11 +88,10 @@ const ExpenseTracker = () => {
   const fetchExpenses = async (userIdParam) => {
     try {
       const response = await axios.post(
-        `${process.env.REACT_APP_NODEURL}/getexpenses`,
+        `${process.env.REACT_APP_NODEURL}/api/expense/getexpense`,
         { userId: userIdParam }
       );
       setExpenses(response.data);
-      console.log(response.data);
     } catch (error) {
       console.error("Error fetching expenses:", error);
     }
@@ -101,8 +100,9 @@ const ExpenseTracker = () => {
   const addExpense = async () => {
     if (newExpense.amount && newExpense.category && newExpense.date) {
       try {
+        console.log(newExpense);
         const response = await axios.post(
-          `${process.env.REACT_APP_NODEURL}/expenses`,
+          `${process.env.REACT_APP_NODEURL}/api/expense/`,
           newExpense
         );
         await fetchExpenses(userId); // Refresh all expenses
@@ -119,18 +119,6 @@ const ExpenseTracker = () => {
       }
     } else {
       alert("Please fill in all required fields (Amount, Category, and Date)");
-    }
-  };
-
-  const updateExpense = async (id, updatedExpense) => {
-    try {
-      await axios.put(`/api/expenses/update/${id}`, updatedExpense, {
-        withCredentials: true,
-      });
-      fetchExpenses(); // Refresh the expenses list
-    } catch (error) {
-      console.error("Error updating expense:", error);
-      alert("Failed to update expense. Please try again.");
     }
   };
 

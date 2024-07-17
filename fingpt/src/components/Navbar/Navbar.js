@@ -33,6 +33,7 @@ const Navbar = ({ isLoggedIn, onLogout }) => {
       "/debt": "Debt Payoff Calculator",
       "/expensetracker": "Expense Tracker",
       "/goal": "Financial Goal Tracker",
+      "/investment":"Investment Portfolio Management"
     };
     setCurrentPage(pathToTitle[location.pathname] || "");
   }, [location]);
@@ -136,6 +137,13 @@ const Navbar = ({ isLoggedIn, onLogout }) => {
             to="/expensetracker"
           >
             Expense Tracker
+          </MenuItem>
+          <MenuItem
+            onClick={handleMenuClose}
+            component={Link}
+            to="/investment"
+          >
+            Investment Portfolio 
           </MenuItem>
           <MenuItem onClick={handleMenuClose} component={Link} to="/goal">
             Financial Goal Tracker

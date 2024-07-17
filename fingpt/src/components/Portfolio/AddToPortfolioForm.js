@@ -6,7 +6,6 @@ function AddToPortfolioForm({ stockData, onAddToPortfolio }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("STOCK DATA:", stockData);
     onAddToPortfolio({
       symbol: stockData['01. symbol'],
       name: stockData['01. symbol'],

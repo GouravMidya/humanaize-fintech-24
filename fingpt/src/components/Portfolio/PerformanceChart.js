@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Typography, Select, MenuItem, FormControl, InputLabel, Box } from '@mui/material';
+import { Typography, Select, MenuItem,ListSubheader, FormControl, InputLabel, Box } from '@mui/material';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import axios from 'axios';
 
@@ -104,6 +104,37 @@ function PerformanceChart({ portfolio = [] }) {
     }
   };
 
+  const groupedStocks = portfolio.reduce((acc, stock) => {
+    if (!acc[stock.name]) {
+      acc[stock.name] = [];
+    }
+    acc[stock.name].push(stock);
+    return acc;
+  }, {});
+
+  // Create a list of unique stocks, combining those with the same name
+  const uniqueStocks = Object.entries(groupedStocks).map(([name, stocks]) => ({
+    name,
+    symbol: stocks.map(s => s.symbol).join(', '),
+    quantity: stocks.reduce((sum, s) => sum + s.quantity, 0)
+  }));
+
+  // Sort the unique stocks alphabetically by name
+  uniqueStocks.sort((a, b) => a.name.localeCompare(b.name));
+
+  // Group unique stocks by first letter of name
+  const groupedUniqueStocks = uniqueStocks.reduce((acc, stock) => {
+    const firstLetter = stock.name[0].toUpperCase();
+    if (!acc[firstLetter]) {
+      acc[firstLetter] = [];
+    }
+    acc[firstLetter].push(stock);
+    return acc;
+  }, {});
+
+  // Sort the groups alphabetically
+  const sortedGroups = Object.keys(groupedUniqueStocks).sort();
+
   if (portfolio.length === 0) {
     return (
       <Typography variant="body1" color="text.secondary">
@@ -121,18 +152,21 @@ function PerformanceChart({ portfolio = [] }) {
         {getExplanation()}
       </Typography>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
-        <FormControl sx={{ minWidth: '120px' }}>
-          <InputLabel sx={{ width: '120px' }}>AllPortfolio</InputLabel>
+        <FormControl sx={{ minWidth: '250px' }}>
+          <InputLabel>Portfolio</InputLabel>
           <Select
             value={selectedStock}
             onChange={(e) => setSelectedStock(e.target.value)}
-            label="Stock"
-            sx={{ width: '120px' }}
+            label="All Portfolio"
           >
             <MenuItem value="">All Portfolio</MenuItem>
-            {portfolio.map((stock) => (
-              <MenuItem key={stock.symbol} value={stock.symbol}>{stock.symbol}</MenuItem>
-            ))}
+            {sortedGroups.map((group) => [
+              ...groupedUniqueStocks[group].map((stock) => (
+                <MenuItem key={stock.symbol} value={stock.symbol} style={{paddingLeft: '30px'}}>
+                  {stock.name}
+                </MenuItem>
+              ))
+            ])}
           </Select>
         </FormControl>
         <FormControl sx={{ minWidth: 120 }}>

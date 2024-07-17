@@ -28,7 +28,7 @@ function StockDetails({ symbol, onStockDataUpdate }) {
     if (symbol) {
       fetchStockData();
     }
-  }, [symbol, onStockDataUpdate]);
+  }, [symbol]);
 
   if (loading) {
     return <CircularProgress />;

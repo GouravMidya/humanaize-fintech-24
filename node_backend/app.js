@@ -8,9 +8,10 @@ import swaggerUi from 'swagger-ui-express';
 import swaggerSpecs from './config/swagger.js';
 
 import authRoute from './routes/authRoute.js';
-import financeInfoRoute from './routes/financialInfoRoute.js';
+import financeInfoRoute from './routes/financialinfoRoute.js';
 import expenseRoutes from './routes/expenseRoutes.js';
 import financialGoalRoute from './routes/financialGoalRoute.js';
+import portfolioRoutes from './routes/portfolioRoutes.js';
 
 const app = express();
 
@@ -29,6 +30,8 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpecs));
 app.use('/api/auth', authRoute);
 app.use('/api/financeInfo', financeInfoRoute);
 app.use('/api/expense', expenseRoutes);
+app.use('/api/portfolio', portfolioRoutes); // Add this line
+
 
 // Error Handler
 app.use(errorHandler);

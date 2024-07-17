@@ -14,7 +14,7 @@ import BudgetOptimizer from "./pages/BudgetOptimizer";
 import LandingPage from "./pages/LandingPage";
 import { isAuthenticated } from "./utils/authUtils";
 import { ThemeContextProvider } from "./ThemeContext";
-import { CssBaseline } from "@mui/material";
+import { CssBaseline,CircularProgress } from "@mui/material";
 import CreditScore from "./pages/CreditScore";
 import ExpenseTracker from "./pages/ExpenseTracker";
 import FinancialGoalTracker from "./pages/FinancialGoalTracker";
@@ -23,13 +23,16 @@ import InvestmentPortfolio from './pages/PortfolioPage';
 
 function AppContent() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const location = useLocation();
 
   useEffect(() => {
-    const user = isAuthenticated();
-    if (user) {
-      setIsLoggedIn(true);
-    }
+    const checkAuth = async () => {
+      const user = await isAuthenticated();
+      setIsLoggedIn(!!user);
+      setIsLoading(false);
+    };
+    checkAuth();
   }, []);
 
   const handleLogin = () => {
@@ -47,6 +50,10 @@ function AppContent() {
 
   const showNavbar = !["/login", "/register"].includes(location.pathname);
 
+  if (isLoading) {
+    return <CircularProgress size={24} />; // Or a more sophisticated loading component
+    
+  }
   return (
     <>
       {showNavbar && <Navbar isLoggedIn={isLoggedIn} onLogout={handleLogout} />}
@@ -75,7 +82,7 @@ function AppContent() {
         <Route path="/debt" element={<DebtPayoffCalculator />} />
         <Route path="/expensetracker" element={isLoggedIn ? <ExpenseTracker /> : <Navigate to="/login" />} />
         <Route path="/goal" element={<FinancialGoalTracker />} />
-        <Route path="/investment" element={<InvestmentPortfolio/>}/>
+        <Route path="/investment" element={isLoggedIn ? <InvestmentPortfolio/>: <Navigate to="/login" />}/>
       </Routes>
     </>
   );
