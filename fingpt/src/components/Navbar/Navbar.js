@@ -118,25 +118,15 @@ const Navbar = ({ isLoggedIn, onLogout }) => {
           open={Boolean(anchorEl)}
           onClose={handleMenuClose}
         >
-          <MenuItem onClick={handleMenuClose} component={Link} to="/budget">
-            Budget Optimizer
-          </MenuItem>
-          <MenuItem
-            onClick={handleMenuClose}
-            component={Link}
-            to="/creditscore"
-          >
-            Credit Score
-          </MenuItem>
-          <MenuItem onClick={handleMenuClose} component={Link} to="/debt">
-            Debt Payoff Calculator
-          </MenuItem>
           <MenuItem
             onClick={handleMenuClose}
             component={Link}
             to="/expensetracker"
           >
             Expense Tracker
+          </MenuItem>
+          <MenuItem onClick={handleMenuClose} component={Link} to="/budget">
+            Budget Optimizer
           </MenuItem>
           <MenuItem
             onClick={handleMenuClose}
@@ -145,8 +135,18 @@ const Navbar = ({ isLoggedIn, onLogout }) => {
           >
             Investment Portfolio 
           </MenuItem>
+          <MenuItem onClick={handleMenuClose} component={Link} to="/debt">
+            Debt Payoff Calculator
+          </MenuItem>
           <MenuItem onClick={handleMenuClose} component={Link} to="/goal">
             Financial Goal Tracker
+          </MenuItem>
+          <MenuItem
+            onClick={handleMenuClose}
+            component={Link}
+            to="/creditscore"
+          >
+            Credit Score
           </MenuItem>
         </Menu>
       </Toolbar>

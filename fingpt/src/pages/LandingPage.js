@@ -80,13 +80,6 @@ const LandingPage = () => {
       image: featureImage,
     },
     {
-      title: "Investment Portfolio Management",
-      description:
-        "Manage your investments efficiently and track your portfolio's performance with real-time updates and insights. Optimize your financial growth with our comprehensive portfolio management tools.",
-      link: "/investment",
-      image: featureImage6,
-    },
-    {
       title: "Expense Tracker",
       description:
         "Monitor and categorize your spending  while gaining insights into spending patterns to make informed decisions and work towards your financial goals.",
@@ -101,11 +94,11 @@ const LandingPage = () => {
       image: featureImage1,
     },
     {
-      title: "Credit Score Improvement Guide",
+      title: "Investment Portfolio Management",
       description:
-        "Discover actionable steps to boost your credit score and unlock better financial opportunities.",
-      link: "/creditscore",
-      image: featureImage2,
+        "Manage your investments efficiently and track your portfolio's performance with real-time updates and insights. Optimize your financial growth with our comprehensive portfolio management tools.",
+      link: "/investment",
+      image: featureImage6,
     },
     {
       title: "Debt Payoff Calculator",
@@ -121,17 +114,24 @@ const LandingPage = () => {
       link: "/goal",
       image: featureImage5,
     },
+    {
+      title: "Credit Score Improvement Guide",
+      description:
+        "Discover actionable steps to boost your credit score and unlock better financial opportunities.",
+      link: "/creditscore",
+      image: featureImage2,
+    },
   ];
 
   const facts = [
     "AI-powered financial planning tools can help increase investment returns by up to 4% annually.",
-    "Diversifying your investments can reduce risk and increase the potential for long-term gains!",
     "Studies show that people who regularly use expense trackers save up to 20% more money than those who don't. This is due to increased awareness of spending habits, which often leads to more mindful purchasing decisions.",
     "People who create and stick to a budget save 10% more of their income on average.",
-    "Improving your credit score by 100 points could save you thousands on mortgage interest.",
+    "Diversifying your investments can reduce risk and increase the potential for long-term gains!",
     "Do you know that debt can be a powerful tool for financial growth but also a source of significant financial risk?",
     "Studies show that individuals with a written financial plan are more than twice as likely to achieve their financial goals compared to those without one.",
-  ];
+    "Improving your credit score by 100 points could save you thousands on mortgage interest.",
+    ];
 
   return (
     <>
