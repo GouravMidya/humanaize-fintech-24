@@ -544,17 +544,21 @@ const ExpenseTracker = () => {
                   <Grid item xs={12} sm={12} md={12} key={expense._id}>
                     <Paper
                       elevation={2}
-                      sx={{
+                      sx={(theme) => ({
                         p: 2,
                         height: "100%",
-                        bgcolor: "#f0f4f8",
-                        borderLeft: "4px solid #1976d2",
-                      }}
+                        bgcolor:
+                          theme.palette.mode === "dark"
+                            ? "rgba(255, 255, 255, 0.05)"
+                            : "#f0f4f8",
+                        borderLeft: `4px solid ${theme.palette.primary.main}`,
+                        color: theme.palette.text.primary,
+                      })}
                     >
                       <Typography variant="body1">
                         ${expense.amount} - {expense.category}
                       </Typography>
-                      <Typography variant="body2" color="textSecondary">
+                      <Typography variant="body2" color="text.secondary">
                         {new Date(expense.date).toLocaleDateString()} -{" "}
                         {expense.description}
                       </Typography>

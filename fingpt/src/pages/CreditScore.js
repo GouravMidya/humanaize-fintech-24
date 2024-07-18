@@ -26,18 +26,20 @@ import {
   Info,
 } from "@mui/icons-material";
 import { PieChart, LineChart } from "@mui/x-charts";
+import { useTheme } from "@mui/material/styles";
+import { ColorModeContext } from "../ThemeContext"; // Adjust the path as needed
 
 import WealthWizard from "../components/WealthWizard";
-const theme = createTheme({
-  palette: {
-    primary: {
-      main: "#1976d2",
-    },
-    secondary: {
-      main: "#388e3c",
-    },
-  },
-});
+// const theme = createTheme({
+//   palette: {
+//     primary: {
+//       main: "#1976d2",
+//     },
+//     secondary: {
+//       main: "#388e3c",
+//     },
+//   },
+// });
 
 const creditFactorsData = [
   { id: 0, label: "Payment History", value: 35, color: "#1976d2" },
@@ -61,6 +63,9 @@ const creditTips = [
 ];
 
 function CreditScore() {
+  const theme = useTheme();
+  // const colorMode = useContext(ColorModeContext);
+
   const [paymentHistory, setPaymentHistory] = useState(100);
   const [creditUtilization, setCreditUtilization] = useState(30);
   const [creditScoreData, setCreditScoreData] = useState([]);
@@ -167,17 +172,17 @@ function CreditScore() {
   const getStatusColor = (status) => {
     switch (status) {
       case "Excellent":
-        return "#388e3c";
+        return theme.palette.success.main;
       case "Very Good":
-        return "#66bb6a";
+        return theme.palette.success.light;
       case "Good":
-        return "#ffa726";
+        return theme.palette.warning.main;
       case "Fair":
-        return "#f57c00";
+        return theme.palette.warning.dark;
       case "Poor":
-        return "#e53935";
+        return theme.palette.error.main;
       default:
-        return "inherit";
+        return theme.palette.text.primary;
     }
   };
 
@@ -187,7 +192,7 @@ function CreditScore() {
   }, []);
 
   return (
-    <ThemeProvider theme={theme}>
+    <>
       <CssBaseline />
       <Container maxWidth="lg" sx={{ py: 4 }}>
         {/* <Typography variant="h2" gutterBottom align="center">
@@ -218,6 +223,12 @@ function CreditScore() {
                   }}
                 >
                   <PieChart
+                    colors={creditFactorsData.map(
+                      (factor) =>
+                        theme.palette.augmentColor({
+                          color: { main: factor.color },
+                        }).main
+                    )}
                     series={[
                       {
                         data: creditFactorsData,
@@ -453,7 +464,14 @@ function CreditScore() {
           <Grid item xs={12}>
             <Paper
               elevation={3}
-              sx={{ p: 3, mt: 4, backgroundColor: "#e3f2fd" }}
+              sx={{
+                p: 3,
+                mt: 4,
+                backgroundColor:
+                  theme.palette.mode === "light"
+                    ? "#e3f2fd"
+                    : theme.palette.background.paper,
+              }}
             >
               <Typography variant="h5" gutterBottom align="center">
                 Additional Resources
@@ -522,7 +540,7 @@ function CreditScore() {
         </Box>
       </Container>
       <WealthWizard initialMessage="How to improve my credit score?" />
-    </ThemeProvider>
+    </>
   );
 }
 

@@ -18,8 +18,10 @@ import handleSend from "../../services/handleSend"; // Import the handleSend fun
 import CloseIcon from "@mui/icons-material/Close";
 import AddCommentIcon from "@mui/icons-material/AddComment";
 import { getUsername } from "../../services/authServices";
+import { useTheme } from "@mui/material/styles";
 
 const Chatbot = ({ initialMessage }) => {
+  const theme = useTheme();
   const [conversations, setConversations] = useState([
     { id: uuidv4(), messages: [], name: "" },
   ]);
@@ -87,18 +89,18 @@ const Chatbot = ({ initialMessage }) => {
   }, [getRandomQuestions]);
 
   const onSend = async (message) => {
-  setIsSending((prev) => ({ ...prev, [currentConversationId]: true }));
-  await handleSend(
-    message || input,
-    currentConversationId,
-    setConversations,
-    setIsSending,
-    setInput,
-    userId // Add this line
-  );
-  setShowQuestions(false);
-  setIsSending((prev) => ({ ...prev, [currentConversationId]: false }));
-};
+    setIsSending((prev) => ({ ...prev, [currentConversationId]: true }));
+    await handleSend(
+      message || input,
+      currentConversationId,
+      setConversations,
+      setIsSending,
+      setInput,
+      userId // Add this line
+    );
+    setShowQuestions(false);
+    setIsSending((prev) => ({ ...prev, [currentConversationId]: false }));
+  };
 
   const handleNewConversation = () => {
     const newId = uuidv4();
@@ -168,12 +170,21 @@ const Chatbot = ({ initialMessage }) => {
           position: "fixed",
           top: "70px",
           left: isToggled ? "20%" : "10px",
-          color: "#1976d2",
-          background: "white",
+          color:
+            theme.palette.mode === "dark"
+              ? "rgba(255, 255, 255, 0.7)"
+              : "#1976d2",
+          background:
+            theme.palette.mode === "dark"
+              ? "rgba(255, 255, 255, 0.05)"
+              : "white",
           borderRadius: "50%",
           padding: "8px",
           zIndex: 1000,
-          boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.2)",
+          boxShadow:
+            theme.palette.mode === "dark"
+              ? "0px 2px 4px rgba(255, 255, 255, 0.1)"
+              : "0px 2px 4px rgba(0, 0, 0, 0.2)",
           transition: "right 0.3s ease",
         }}
       >
@@ -219,12 +230,21 @@ const Chatbot = ({ initialMessage }) => {
                     className="button-question"
                     variant="contained"
                     style={{
-                      border: "1px solid #303030",
+                      border:
+                        theme.palette.mode === "dark"
+                          ? "1px solid rgba(255, 255, 255, 0.23)"
+                          : "1px solid #303030",
                       padding: "10px",
                       height: "5rem",
-                      backgroundColor: "rgba(255, 255, 255, 0.5)",
+                      backgroundColor:
+                        theme.palette.mode === "dark"
+                          ? "rgba(255, 255, 255, 0.05)"
+                          : "rgba(255, 255, 255, 0.5)",
                       borderRadius: "10px",
-                      color: "#303030",
+                      color:
+                        theme.palette.mode === "dark"
+                          ? "rgba(255, 255, 255, 0.9)"
+                          : "#303030",
                       boxShadow: "none",
                     }}
                     fullWidth
@@ -248,7 +268,14 @@ const Chatbot = ({ initialMessage }) => {
             justifyContent="center"
           >
             <TextField
-              style={{ padding: "0.5rem", maxWidth: "70%" }}
+              style={{
+                padding: "0.5rem",
+                maxWidth: "70%",
+                backgroundColor:
+                  theme.palette.mode === "dark"
+                    ? "rgba(255, 255, 255, 0.05)"
+                    : "rgba(0, 0, 0, 0.05)",
+              }}
               fullWidth
               variant="outlined"
               placeholder="Type your message..."
@@ -258,11 +285,19 @@ const Chatbot = ({ initialMessage }) => {
                 endAdornment: (
                   <InputAdornment position="end">
                     <IconButton
-                      color="primary"
+                      color={
+                        theme.palette.mode === "dark" ? "default" : "primary"
+                      }
                       onClick={() => onSend()}
                       disabled={
                         !input.trim() || isSending[currentConversationId]
                       }
+                      style={{
+                        color:
+                          theme.palette.mode === "dark"
+                            ? "rgba(255, 255, 255, 0.7)"
+                            : theme.palette.primary.main,
+                      }}
                     >
                       {isSending[currentConversationId] ? (
                         <CircularProgress size={24} />

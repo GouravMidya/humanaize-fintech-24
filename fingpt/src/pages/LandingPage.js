@@ -8,8 +8,9 @@ import featureImage2 from "./../assets/support7.jpg";
 import featureImage3 from "./../assets/support3.jpg";
 import featureImage4 from "./../assets/support4.jpg";
 import featureImage5 from "./../assets/support6.jpg";
+import featureImage6 from "./../assets/support9.jpg";
 import WealthWizard from "../components/WealthWizard";
-import { styled, useTheme } from '@mui/material/styles';
+import { styled, useTheme } from "@mui/material/styles";
 
 const FullScreenHero = styled(Box)(({ theme }) => ({
   position: "relative",
@@ -17,8 +18,8 @@ const FullScreenHero = styled(Box)(({ theme }) => ({
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
-  color: theme.palette.common.black,
-  '&::before': {
+  color: theme.palette.mode === "dark" ? "#BDBDBD" : theme.palette.common.black, // Light grey in dark mode
+  "&::before": {
     content: '""',
     position: "absolute",
     top: 0,
@@ -28,7 +29,7 @@ const FullScreenHero = styled(Box)(({ theme }) => ({
     backgroundImage: `url(${heroImage})`,
     backgroundSize: "cover",
     backgroundPosition: "center",
-    opacity: 0.5, // Adjust the opacity value to reduce transparency
+    opacity: theme.palette.mode === "dark" ? 0.4 : 0.5, // Reduce opacity slightly in dark mode
     zIndex: -1,
   },
 }));
@@ -39,15 +40,32 @@ const WhiteSection = styled(Box)(({ theme }) => ({
 }));
 
 const ImageSection = styled(Box)(({ theme, image }) => ({
+  position: "relative",
   backgroundImage: `url("${image}")`,
   backgroundSize: "cover",
   backgroundPosition: "center",
   minHeight: 400,
+  "&::after": {
+    content: '""',
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "rgba(0, 0, 0, 0.2)", // This creates a semi-transparent black overlay
+    opacity: theme.palette.mode === "dark" ? 1 : 0, // Only show in dark mode
+    transition: "opacity 0.3s ease-in-out",
+  },
 }));
-
 const Footer = styled(Box)(({ theme }) => ({
-  backgroundColor: theme.palette.primary.main,
-  color: theme.palette.primary.contrastText,
+  backgroundColor:
+    theme.palette.mode === "dark"
+      ? theme.palette.background.paper // Use the same color as navbar in dark mode
+      : theme.palette.primary.main, // Keep the primary color for light mode
+  color:
+    theme.palette.mode === "dark"
+      ? theme.palette.text.primary // Use primary text color in dark mode
+      : theme.palette.primary.contrastText, // Keep contrast text color for light mode
   padding: theme.spacing(6),
 }));
 
@@ -62,9 +80,16 @@ const LandingPage = () => {
       image: featureImage,
     },
     {
+      title: "Investment Portfolio Management",
+      description:
+        "Manage your investments efficiently and track your portfolio's performance with real-time updates and insights. Optimize your financial growth with our comprehensive portfolio management tools.",
+      link: "/investment",
+      image: featureImage6,
+    },
+    {
       title: "Expense Tracker",
       description:
-        "monitor and categorize your spending  while gaining insights into spending patterns to make informed decisions and work towards your financial goals.",
+        "Monitor and categorize your spending  while gaining insights into spending patterns to make informed decisions and work towards your financial goals.",
       link: "/expensetracker",
       image: featureImage4,
     },
@@ -100,6 +125,7 @@ const LandingPage = () => {
 
   const facts = [
     "AI-powered financial planning tools can help increase investment returns by up to 4% annually.",
+    "Diversifying your investments can reduce risk and increase the potential for long-term gains!",
     "Studies show that people who regularly use expense trackers save up to 20% more money than those who don't. This is due to increased awareness of spending habits, which often leads to more mindful purchasing decisions.",
     "People who create and stick to a budget save 10% more of their income on average.",
     "Improving your credit score by 100 points could save you thousands on mortgage interest.",
@@ -111,13 +137,7 @@ const LandingPage = () => {
     <>
       <FullScreenHero>
         <Container maxWidth="m">
-          <Typography
-            component="h1"
-            variant="h2"
-            align="center"
-            gutterBottom
-            color="black"
-          >
+          <Typography component="h1" variant="h2" align="center" gutterBottom>
             Plan Your Financial Future with WealthWizard
           </Typography>
           <Typography variant="h5" align="center" paragraph>
