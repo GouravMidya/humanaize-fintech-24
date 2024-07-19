@@ -1,16 +1,21 @@
 import FinancialGoal from '../models/FinancialGoal.js';
+import User from '../models/userModel.js';
 
 export const createGoal = async (req, res) => {
   try {
-    const { goalName, amount, targetDate } = req.body;
+    const { goalName, amount, targetDate, userId } = req.body;
     const newGoal = new FinancialGoal({
-      userId: req.user.id,
+      user: userId,
       goalName,
       amount,
       targetDate
     });
-    await newGoal.save();
-    res.status(201).json(newGoal);
+
+    const savedGoal = await newGoal.save();
+
+    await User.findByIdAndUpdate(userId, { $push: { goals: savedGoal._id } });
+    
+    res.status(201).json(savedGoal);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
@@ -18,8 +23,13 @@ export const createGoal = async (req, res) => {
 
 export const getGoals = async (req, res) => {
   try {
-    const goals = await FinancialGoal.find({ userId: req.user.id });
-    res.json(goals);
+    const { userId } = req.body;
+    if (!userId) {
+      return res.status(400).json({ message: "User ID is required" });
+    }
+
+    const goals = await FinancialGoal.find({ user: userId });
+    res.status(200).json(goals);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

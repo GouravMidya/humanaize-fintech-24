@@ -142,7 +142,7 @@ const router = express.Router();
  */
 
 router.post('/', financialGoalController.createGoal);
-router.get('/', financialGoalController.getGoals);
+router.post('/get', financialGoalController.getGoals);
 router.put('/:id', financialGoalController.updateGoal);
 router.delete('/:id', financialGoalController.deleteGoal);
 
