@@ -76,7 +76,6 @@ const ExpenseTracker = () => {
       try {
         const { userId } = await getUsername();
         setUserId(userId);
-        console.log(userId);
         newExpense.userId = userId;
         await fetchExpenses(userId);
       } catch (error) {
@@ -101,7 +100,6 @@ const ExpenseTracker = () => {
   const addExpense = async () => {
     if (newExpense.amount && newExpense.category && newExpense.date) {
       try {
-        console.log(newExpense);
         const response = await axios.post(
           `${process.env.REACT_APP_NODEURL}/api/expense/`,
           newExpense

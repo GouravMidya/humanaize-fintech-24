@@ -10,7 +10,6 @@ export const addChatSession = async (req, res) => {
     if (!user) {
       return res.status(404).send("User not found");
     }
-
     user.chat_sessions.push({
       chat_session_id: chatSessionId,
       chat_name: chatName,
@@ -49,8 +48,7 @@ export const deleteChatSession = async (req, res) => {
 
 // Controller function to fetch all chat sessions for a user
 export const getChatSessions = async (req, res) => {
-  const { userId } = req.params;
-
+  const { userId } = req.query;
   try {
     const user = await User.findById(userId);
 

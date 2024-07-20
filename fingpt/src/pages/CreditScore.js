@@ -243,8 +243,7 @@ function CreditScore() {
                         },
                         faded: {
                           innerRadius: 30,
-                          additionalRadius: -30,
-                          color: "gray",
+                          additionalRadius: -40,
                         },
                       },
                     ]}

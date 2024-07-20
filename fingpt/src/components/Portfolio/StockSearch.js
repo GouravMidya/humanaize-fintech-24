@@ -9,12 +9,10 @@ function StockSearch({ onSelectStock }) {
   const [searchResults, setSearchResults] = useState([]);
 
   const handleSearch = async () => {
-    console.log(`API Request: Searching for stock with keyword "${searchTerm} "`, API_KEY);
     try {
       const response = await axios.get(
         `https://www.alphavantage.co/query?function=SYMBOL_SEARCH&keywords=${searchTerm}&apikey=${API_KEY}`
       );
-      console.log(response.data);
       setSearchResults(response.data.bestMatches || []);
     } catch (error) {
       console.error('Error searching for stocks:', error);

@@ -10,12 +10,10 @@ function StockDetails({ symbol, onStockDataUpdate }) {
 
   useEffect(() => {
     const fetchStockData = async () => {
-      console.log(`API Request: Fetching details for stock symbol "${symbol}"`, API_KEY);
       try {
         const response = await axios.get(
           `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${symbol}&apikey=${API_KEY}`
         );
-        console.log(response.data);
         setStockData(response.data['Global Quote']);
         onStockDataUpdate(response.data['Global Quote']); // Add this line
         setLoading(false);

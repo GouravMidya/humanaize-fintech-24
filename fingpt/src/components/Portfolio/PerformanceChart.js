@@ -13,7 +13,6 @@ function PerformanceChart({ portfolio = [] }) {
   useEffect(() => {
     const fetchData = async () => {
       if (selectedStock) {
-        console.log(`API Request: Fetching EOD data for ${selectedStock}`);
         try {
           const response = await axios.get(
             `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&outputsize=full&symbol=${selectedStock}&apikey=${API_KEY}&datatype=csv`,
@@ -38,7 +37,6 @@ function PerformanceChart({ portfolio = [] }) {
             }))
             .reverse();
 
-          console.log("Parsed Chart Data:", data);
           setChartData(data);
         } catch (error) {
           console.error('Error fetching stock data:', error);

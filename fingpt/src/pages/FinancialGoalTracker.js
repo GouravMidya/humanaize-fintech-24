@@ -184,7 +184,6 @@ const FinancialGoalTracker = () => {
         targetDate: date.toISOString(),
       };
       const response = await axios.post(`${process.env.REACT_APP_NODEURL}/api/financial-goals`, newGoal);
-      console.log("Goal saved:", response.data);
       fetchSavedGoals();
     } catch (err) {
       console.error("Error saving goal:", err);

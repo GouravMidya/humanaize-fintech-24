@@ -187,7 +187,6 @@ const DebtPayoffCalculator = () => {
   const fetchSavedDebts = async () => {
     try {
       const { userId } = await getUsername();
-      console.log(userId);
       const response = await axios.post(`${process.env.REACT_APP_NODEURL}/api/debts/get`, { userId });
       setSavedDebts(response.data);
       setLoading(false);
@@ -237,9 +236,7 @@ const DebtPayoffCalculator = () => {
     try {
       const { userId } = await getUsername();
       const debtWithUserId = { ...debts[0], userId };
-      console.log("Debt to be saved:", debtWithUserId);
       const response = await axios.post(`${process.env.REACT_APP_NODEURL}/api/debts`, debtWithUserId);
-      console.log("Debt saved:", response.data);
       fetchSavedDebts();
     } catch (err) {
       console.error("Error saving debt:", err);

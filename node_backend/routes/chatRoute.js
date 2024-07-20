@@ -8,7 +8,7 @@ import {
 const router = express.Router();
 
 // Route to get all chat sessions for a user
-router.get("/:userId", getChatSessions);
+router.get("/", getChatSessions);
 
 // Endpoint to add a new chat session to the user
 router.post("/", addChatSession);

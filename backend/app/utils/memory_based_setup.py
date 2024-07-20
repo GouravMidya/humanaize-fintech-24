@@ -66,7 +66,7 @@ def save_session_history(session_id: str):
 
 
 def setup_mem_components():
-    local_llm = 'phi3'  # llama3
+    local_llm = 'llama3'  # llama3
     embedding = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
     persist_directory = os.path.join(FOLDER_PATH, "chroma/")
     vectordb = Chroma(persist_directory=persist_directory, embedding_function=embedding)
@@ -94,6 +94,8 @@ def setup_mem_components():
         Use the following pieces of retrieved context to answer the question
         meaningfully. If you don't know the answer, just say you don't have enough information.
         Use six sentences maximum and keep the answer concise.
+        Retrieved context:
+        {context}
         
         Consider when necessary the user's financial information when answering:
         Monthly Income: {monthly_income}
@@ -102,13 +104,8 @@ def setup_mem_components():
         Long Term Goals: {long_term_goals}
         Risk Tolerance: {risk_tolerance}
         Age: {age}
-        
-        Retrieved context:
-        {context}
-        
-        When necessary personalize your response based on the user's specific financial situation.
-        If you're asked about something unrelated to finance, politely redirect the conversation to financial topics."""
-    print(qa_system_prompt)
+
+        If you're asked about something unrelated to finance politely reject from answering the question"""
     qa_prompt = ChatPromptTemplate.from_messages(
         [
             ("system", qa_system_prompt),

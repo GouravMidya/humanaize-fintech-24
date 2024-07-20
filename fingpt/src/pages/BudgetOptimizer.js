@@ -248,7 +248,26 @@ const BudgetOptimizer = () => {
     isOptimized = false,
     originalExpenses,
   }) => {
-    const pieChartData = Object.entries(expenses).map(
+    const totalExpensePercentage = Object.values(expenses).reduce((sum, percentage) => sum + percentage, 0);
+    const adjustedExpenses = { ...expenses };
+
+    // Adjust percentages if they exceed 100%
+    if (totalExpensePercentage > 100) {
+      const adjustmentFactor = 100 / totalExpensePercentage;
+      Object.keys(adjustedExpenses).forEach((category) => {
+        adjustedExpenses[category] *= adjustmentFactor;
+      });
+    }
+
+    // Ensure Savings is not negative
+    if (adjustedExpenses.Savings < 0) {
+      adjustedExpenses.Savings = 0;
+    }
+
+    const totalExpenses = (Object.values(adjustedExpenses).reduce((sum, percentage) => sum + percentage, 0) / 100) * totalIncome;
+    const surplus = totalIncome - totalExpenses;
+
+    const pieChartData = Object.entries(adjustedExpenses).map(
       ([category, percentage], index) => ({
         id: category,
         value: percentage,
@@ -274,14 +293,14 @@ const BudgetOptimizer = () => {
               <Grid item xs={6}>
                 <ListItemText
                   primary="Total Expenses"
-                  secondary={`₹${totalExpenses.toFixed(2)} (${totalExpensePercentage.toFixed(2)}%)`}
+                  secondary={`₹${totalExpenses.toFixed(2)} (${(totalExpenses / totalIncome * 100).toFixed(2)}%)`}
                 />
               </Grid>
             </Grid>
           </ListItem>
           <Divider />
           <Grid container>
-            {Object.entries(expenses).map(([category, percentage], index) => (
+            {Object.entries(adjustedExpenses).map(([category, percentage], index) => (
               <Grid item xs={6} key={index}>
                 <ListItem>
                   <ListItemText
@@ -315,17 +334,14 @@ const BudgetOptimizer = () => {
             ))}
           </Grid>
         </List>
-        {isOverBudget && (
-          <Alert severity="warning" sx={{ mt: 2 }}>
-            Warning: Total expenses exceed 100% of income
-          </Alert>
-        )}
         {surplus > 0 && (
           <Alert severity="success" sx={{ mt: 2 }}>
-            Savings: ₹
-            {isOptimized
-              ? `${((optimizedBudget.Savings.toFixed(2) / 100) * totalIncome).toFixed(2)} (${optimizedBudget.Savings.toFixed(2)}% of income)`
-              : `${((expenses.Savings.toFixed(2) / 100) * totalIncome).toFixed(2)} (${expenses.Savings.toFixed(2)}% of income)`}
+            Savings: ₹{surplus.toFixed(2)} ({(surplus / totalIncome * 100).toFixed(2)}% of income)
+          </Alert>
+        )}
+        {surplus < 0 && (
+          <Alert severity="warning" sx={{ mt: 2 }}>
+            Warning: Total Expense Exceeding 100%
           </Alert>
         )}
 

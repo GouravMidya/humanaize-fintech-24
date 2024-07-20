@@ -38,21 +38,41 @@ const Chatbot = ({ initialMessage }) => {
   const [userId, setUserId] = useState("");
 
   useEffect(() => {
-    const fetchUserId = async () => {
+    const fetchUserDataAndConversations = async () => {
       try {
-        const { userId } = await getUsername(); // Assuming this function returns an object with userId
+        const { userId } = await getUsername();
         setUserId(userId);
-        // // Send the initial conversation ID to the Node API
-        // await axios.post("http://localhost:8001/api/conversations", {
-        //   id: conversations[0].id,
-        //   userId: userId,
-        // });
+        
+        const response = await axios.get(`${process.env.REACT_APP_NODEURL}/api/conversations`, {
+          params: { userId: userId },
+        });
+        
+        if (response.data && Array.isArray(response.data) && response.data.length > 0) {
+          const fetchedConversations = await Promise.all(response.data.map(async (conv) => {
+            const chatSessionResponse = await axios.get(`${process.env.REACT_APP_FASTURL}/chat/${conv.chat_session_id}`);
+            const messages = chatSessionResponse.data.history.map(msg => ({
+              sender: msg.type === 'human' ? 'user' : 'bot',
+              text: msg.content
+            }));
+            return {
+              id: conv.chat_session_id,
+              name: conv.chat_name,
+              messages: messages,
+            };
+          }));
+          
+          console.log('Fetched conversations:', fetchedConversations);
+          setConversations(fetchedConversations);
+          setCurrentConversationId(fetchedConversations[0].id);
+        } else {
+          console.log('No conversations found, using default');
+        }
       } catch (error) {
-        console.error("Error fetching user ID:", error);
+        console.error("Error fetching user data and conversations:", error);
       }
     };
-    fetchUserId();
-  }, [conversations]);
+    fetchUserDataAndConversations();
+  }, []);
 
   const questions = useMemo(
     () => [

@@ -6,7 +6,7 @@ from bson.objectid import ObjectId
 import os
 
 # Environment variable for MongoDB connection
-MONGO_DB_URL = os.getenv("MONGO_DB_URL")
+MONGO_DB_URL = os.getenv("MONGODB_URI")
 
 # Connect to MongoDB
 mongo_client = MongoClient(MONGO_DB_URL)
