@@ -70,3 +70,39 @@ export const getChatSessions = async (req, res) => {
     res.status(500).send("Internal server error");
   }
 };
+
+// Controller function to update the chat name of a specific chat session
+export const updateChatName = async (req, res) => {
+  const { userId, chatSessionId, newChatName } = req.body;
+
+  try {
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).send("User not found");
+    }
+
+    const result = await User.updateOne(
+      {
+        _id: userId,
+        "chat_sessions.chat_session_id": chatSessionId,
+      },
+      {
+        $set: { "chat_sessions.$.chat_name": newChatName },
+      }
+    );
+
+    if (result.matchedCount === 0) {
+      return res.status(404).send("Chat session not found");
+    }
+
+    if (result.modifiedCount === 0) {
+      return res.status(400).send("Chat name is the same as before");
+    }
+
+    res.status(200).send("Chat name updated successfully");
+  } catch (error) {
+    console.error("Error updating chat name:", error);
+    res.status(500).send("Internal server error");
+  }
+};
