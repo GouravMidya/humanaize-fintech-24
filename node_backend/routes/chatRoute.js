@@ -1,15 +1,19 @@
 import express from "express";
 import {
-  getSessionHistory,
-  saveSessionHistory,
+  addChatSession,
+  deleteChatSession,
+  getChatSessions,
 } from "../controllers/chatController.js";
 
 const router = express.Router();
 
-// Route to get chat history for a session
-router.get("/chats/:sessionId", getSessionHistory);
+// Route to get all chat sessions for a user
+router.get("/:userId", getChatSessions);
 
-// Route to save chat history for a session
-router.post("/chats/:sessionId", saveSessionHistory);
+// Endpoint to add a new chat session to the user
+router.post("/", addChatSession);
+
+// Endpoint to delete a chat session from the user
+router.delete("/", deleteChatSession);
 
 export default router;

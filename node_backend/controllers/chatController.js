@@ -1,66 +1,67 @@
-import mongoose from "mongoose";
+import User from "../models/userModel.js";
 
-const MessageSchema = new mongoose.Schema({
-  type: {
-    type: String,
-    required: true,
-    enum: ["human", "ai"],
-  },
-  content: {
-    type: String,
-    required: true,
-  },
-});
+// Controller function to add a new chat session to a user
+export const addChatSession = async (req, res) => {
+  const { id: chatSessionId, userId, chatName } = req.body;
 
-const ChatSessionSchema = new mongoose.Schema({
-  session_id: {
-    type: String,
-    required: true,
-    unique: true,
-  },
-  history: [MessageSchema],
-});
-
-const ChatSession = mongoose.model("ChatSession", ChatSessionSchema);
-
-export const getSessionHistory = async (req, res) => {
-  const sessionId = req.params.sessionId;
   try {
-    console.log("Searching for session ID:", sessionId);
-    let chatSession = await ChatSession.findOne({
-      session_id: sessionId,
-    }).lean();
-    console.log("Found chat session:", chatSession);
+    const user = await User.findById(userId);
 
-    if (!chatSession || !chatSession.history) {
-      console.log("No chat session or history found");
-      res.json([]);
-    } else {
-      console.log("Sending history:", chatSession.history);
-      res.json(chatSession.history);
+    if (!user) {
+      return res.status(404).send("User not found");
     }
+
+    user.chat_sessions.push({
+      chat_session_id: chatSessionId,
+      chat_name: chatName,
+    });
+
+    await user.save();
+    res.status(200).send("Chat session added successfully");
   } catch (error) {
-    console.error("Error:", error);
-    res.status(500).json({ message: error.message });
+    console.error("Error updating user with new chat session:", error);
+    res.status(500).send("Internal server error");
   }
 };
 
-export const saveSessionHistory = async (req, res) => {
-  const sessionId = req.params.sessionId;
-  const messages = req.body.messages;
+// Controller function to delete a chat session from a user
+export const deleteChatSession = async (req, res) => {
+  const { id: chatSessionId, userId } = req.body;
+
   try {
-    let chatSession = await ChatSession.findOne({ session_id: sessionId });
-    if (!chatSession) {
-      chatSession = new ChatSession({
-        session_id: sessionId,
-        history: messages,
-      });
-    } else {
-      chatSession.history = messages;
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).send("User not found");
     }
-    await chatSession.save();
-    res.status(200).json({ message: "Chat history saved successfully" });
+
+    user.chat_sessions = user.chat_sessions.filter(
+      (session) => session.chat_session_id !== chatSessionId
+    );
+
+    await user.save();
+    res.status(200).send("Chat session deleted successfully");
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error("Error deleting chat session:", error);
+    res.status(500).send("Internal server error");
+  }
+};
+
+// Controller function to fetch all chat sessions for a user
+export const getChatSessions = async (req, res) => {
+  const { userId } = req.params;
+
+  try {
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).send("User not found");
+    }
+
+    // Send the user's chat sessions
+    res.status(200).json(user.chat_sessions);
+  } catch (error) {
+    console.error("Error fetching chat sessions:", error);
+    res.status(500).send("Internal server error");
   }
 };

@@ -13,6 +13,7 @@ import {
 } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 import { v4 as uuidv4 } from "uuid";
+import axios from "axios"; // Import Axios
 import favicon from "../Chatbot/favicon.ico"; // Adjust the path as necessary
 import handleSend from "../../services/handleSend"; // Import the handleSend function
 import CloseIcon from "@mui/icons-material/Close";
@@ -23,7 +24,7 @@ import { useTheme } from "@mui/material/styles";
 const Chatbot = ({ initialMessage }) => {
   const theme = useTheme();
   const [conversations, setConversations] = useState([
-    { id: uuidv4(), messages: [], name: "" },
+    { id: uuidv4(), messages: [], name: "New Chat" },
   ]);
   const [currentConversationId, setCurrentConversationId] = useState(
     conversations[0].id
@@ -41,12 +42,17 @@ const Chatbot = ({ initialMessage }) => {
       try {
         const { userId } = await getUsername(); // Assuming this function returns an object with userId
         setUserId(userId);
+        // // Send the initial conversation ID to the Node API
+        // await axios.post("http://localhost:8001/api/conversations", {
+        //   id: conversations[0].id,
+        //   userId: userId,
+        // });
       } catch (error) {
         console.error("Error fetching user ID:", error);
       }
     };
     fetchUserId();
-  }, []);
+  }, [conversations]);
 
   const questions = useMemo(
     () => [
@@ -102,13 +108,40 @@ const Chatbot = ({ initialMessage }) => {
     setIsSending((prev) => ({ ...prev, [currentConversationId]: false }));
   };
 
-  const handleNewConversation = () => {
+  const handleNewConversation = async () => {
+    // Check if the current conversation has any messages
+    const currentConversation = conversations.find(
+      (conv) => conv.id === currentConversationId
+    );
+    if (currentConversation && currentConversation.messages.length === 0) {
+      // If there are no messages, don't create a new conversation
+      console.log(
+        "Cannot create a new conversation. Current conversation is empty."
+      );
+      return;
+    }
+
     const newId = uuidv4();
-    setConversations([...conversations, { id: newId, messages: [], name: "" }]);
+    const newName = "New Chat"; // Default name or provide a way to input name
+
+    setConversations([
+      ...conversations,
+      { id: newId, messages: [], name: newName },
+    ]);
     setCurrentConversationId(newId);
     setIsSending((prev) => ({ ...prev, [newId]: false }));
     setShowQuestions(true); // Show questions for the new conversation
     setRandomQuestions(getRandomQuestions()); // Update questions for the new conversation
+
+    try {
+      await axios.post("http://localhost:8001/api/conversations", {
+        id: newId,
+        userId: userId, // Include the userId in the request
+        chatName: newName, // Send the conversation name
+      });
+    } catch (error) {
+      console.error("Error creating new conversation:", error);
+    }
   };
 
   const handleConversationClick = (id) => {
@@ -118,7 +151,7 @@ const Chatbot = ({ initialMessage }) => {
     ); // Show questions if no messages
   };
 
-  const handleDeleteConversation = (id) => {
+  const handleDeleteConversation = async (id) => {
     const updatedConversations = conversations.filter((conv) => conv.id !== id);
     setConversations(updatedConversations);
 
@@ -130,6 +163,17 @@ const Chatbot = ({ initialMessage }) => {
     } else {
       // If there are no conversations left, set the current conversation to null
       setCurrentConversationId(null);
+    }
+
+    try {
+      await axios.delete("http://localhost:8001/api/conversations", {
+        data: {
+          id: id, // The chat session ID to be deleted
+          userId: userId, // The user ID of the user whose chat session is being deleted
+        },
+      });
+    } catch (error) {
+      console.error("Error deleting conversation:", error);
     }
   };
 

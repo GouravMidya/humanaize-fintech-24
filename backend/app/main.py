@@ -5,6 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from .config import ORIGINS
 from .routers.query import router as query_router
 from .routers.budget import router as budget_router
+from .routers.chat import router as chat_router
 
 app = FastAPI()
 
@@ -20,7 +21,7 @@ app.add_middleware(
 # Include routers
 app.include_router(query_router)
 app.include_router(budget_router, prefix="/budget", tags=["budget"])
-
+app.include_router(chat_router, tags=["chat"])
 
 if __name__ == "__main__":
     import uvicorn

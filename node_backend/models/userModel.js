@@ -23,12 +23,11 @@ const userSchema = new mongoose.Schema({
   chat_sessions: [
     {
       chat_session_id: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "ChatSession",
+        type: String,
+        required: true,
       },
       chat_name: {
         type: String,
-        required: true,
       },
     },
   ],
@@ -36,10 +35,12 @@ const userSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "FinancialInfo",
   },
-  debts: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Debt"
-  }]
+  debts: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Debt",
+    },
+  ],
 });
 
 userSchema.pre("save", async function () {
