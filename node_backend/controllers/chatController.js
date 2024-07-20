@@ -10,12 +10,19 @@ export const addChatSession = async (req, res) => {
     if (!user) {
       return res.status(404).send("User not found");
     }
-    user.chat_sessions.push({
-      chat_session_id: chatSessionId,
-      chat_name: chatName,
-    });
 
-    await user.save();
+    await User.findOneAndUpdate(
+      { _id: userId },
+      {
+        $addToSet: {
+          chat_sessions: {
+            chat_session_id: chatSessionId,
+            chat_name: chatName,
+          },
+        },
+      }
+    );
+
     res.status(200).send("Chat session added successfully");
   } catch (error) {
     console.error("Error updating user with new chat session:", error);
