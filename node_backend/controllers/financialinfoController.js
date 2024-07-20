@@ -26,9 +26,8 @@ export const addFinancialInfo = async (req, res) => {
 
 export const getFinancialInfoByUserId = async (req, res) => {
   try {
-    const { userId } = req.query; // Extract userId from query parameters
+    const { userId } = req.query; // Extract userId from query parameter
     const financialInfo = await FinancialInfo.findOne({ userId });
-
     if (!financialInfo) {
       return res.status(404).json({ message: 'Financial information not found' });
     }

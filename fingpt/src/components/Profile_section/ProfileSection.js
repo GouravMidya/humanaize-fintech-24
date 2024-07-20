@@ -63,7 +63,6 @@ const ProfileSection = () => {
         }
       );
       setFinancialInfo(response.data.financialInfo);
-      console.log(response.data);
     } catch (error) {
       console.error("Error fetching financial information:", error);
     }

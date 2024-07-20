@@ -46,6 +46,7 @@ import {
 } from "chart.js";
 import "chartjs-adapter-date-fns";
 import WealthWizard from "../components/WealthWizard";
+import wizardIcon from "../assets/wizardIcon.png";
 
 ChartJS.register(
   ArcElement,
@@ -185,27 +186,33 @@ const ExpenseTracker = () => {
       totalAmount += parseFloat(expense.amount);
     });
 
+    // Add header with logo and name
+    doc.addImage(wizardIcon, "PNG",65, 21, 15, 15);
+    doc.setFontSize(22);
+    doc.setTextColor(0, 102, 204);
+    doc.text("WealthWizard", 80, 30);
+
     // Add title with date range
     doc.setFontSize(18);
-    doc.text(`Expense Report`, 14, 15);
+    doc.setTextColor(0, 0, 0);
+    doc.text(`Expense Report`, 14, 50);
     doc.setFontSize(12);
     doc.text(
       `From: ${format(new Date(dateRange.start), "MMM dd, yyyy")} To: ${format(
         new Date(dateRange.end),
         "MMM dd, yyyy"
       )}`,
-      14,
-      25
+      14, 60
     );
 
     // Add total expenses
-    doc.text(`Total Expenses: $${totalAmount.toFixed(2)}`, 14, 35);
+    doc.text(`Total Expenses: $${totalAmount.toFixed(2)}`, 14, 70);
 
     // Add table
     doc.autoTable({
       head: [tableColumn],
       body: tableRows,
-      startY: 40,
+      startY: 75,
       theme: "grid",
       styles: { fontSize: 8 },
       headStyles: { fillColor: [75, 75, 75] },

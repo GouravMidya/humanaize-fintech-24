@@ -1,28 +1,24 @@
 import mongoose from 'mongoose';
 
 const financialGoalSchema = new mongoose.Schema({
-  userId: {
+  user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: true
   },
   goalName: {
     type: String,
-    required: true
+    required: [true, "Goal name is required"]
   },
   amount: {
     type: Number,
-    required: true
+    required: [true, "Goal amount is required"]
   },
   targetDate: {
     type: Date,
-    required: true
+    required: [true, "Target date is required"]
   },
   createdAt: {
-    type: Date,
-    default: Date.now
-  },
-  updatedAt: {
     type: Date,
     default: Date.now
   }

@@ -1,6 +1,5 @@
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
-import FinancialInfo from "./financialInfoModel.js";
 
 const userSchema = new mongoose.Schema({
   email: {
@@ -39,6 +38,12 @@ const userSchema = new mongoose.Schema({
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Debt",
+    },
+  ],
+  goals: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "FinancialGoal",
     },
   ],
 });

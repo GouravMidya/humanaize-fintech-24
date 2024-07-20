@@ -30,38 +30,17 @@ import WealthWizard from "../components/WealthWizard";
 import { startOfMonth, endOfMonth } from "date-fns";
 
 const customColors = [
-  "#1f77b4",
-  "#ff7f0e",
-  "#48cae4",
-  "#d62728",
-  "#8338ec",
-  "#0f4c5c",
-  "#fb6f92",
-  "#7f7f7f",
-  "#bcbd22",
-  "#17becf",
-  "#aec7e8",
-  "#ffbb78",
-  "#98df8a",
-  "#ff9896",
-  "#c5b0d5",
-  "#c49c94",
-  "#f7b6d2",
-  "#c7c7c7",
-  "#dbdb8d",
-  "#9edae5",
+  "#1f77b4", "#ff7f0e", "#48cae4", "#d62728", "#8338ec",
+  "#0f4c5c", "#fb6f92", "#7f7f7f", "#bcbd22", "#17becf",
+  "#aec7e8", "#ffbb78", "#98df8a", "#ff9896", "#c5b0d5",
+  "#c49c94", "#f7b6d2", "#c7c7c7", "#dbdb8d", "#9edae5",
 ];
 
 const BudgetOptimizer = () => {
   const [incomes, setIncomes] = useState([{ source: "Salary", amount: 0 }]);
   const [expenses, setExpenses] = useState({
-    Housing: 25,
-    Food: 15,
-    Transportation: 10,
-    Utilities: 10,
-    Entertainment: 10,
-    Savings: 20,
-    Other: 10,
+    Housing: 25, Food: 15, Transportation: 10, Utilities: 10,
+    Entertainment: 10, Savings: 20, Other: 10,
   });
   const [optimizedBudget, setOptimizedBudget] = useState();
   const [suggestions, setSuggestions] = useState([]);
@@ -79,21 +58,47 @@ const BudgetOptimizer = () => {
       end: lastDayOfMonth.toISOString().split("T")[0],
     });
 
-    const fetchUserId = async () => {
-      const { userId } = await getUsername();
-      setUserId(userId);
+    const fetchUserIdAndIncome = async () => {
+      try {
+        const { userId } = await getUsername();
+        setUserId(userId);
+        await fetchIncome(userId);
+      } catch (error) {
+        console.error("Error fetching user ID or income:", error);
+      }
     };
-    fetchUserId();
+    fetchUserIdAndIncome();
   }, []);
 
+  const fetchIncome = async (userId) => {
+    try {
+      const response = await axios.get(
+        `${process.env.REACT_APP_NODEURL}/api/financeInfo`,
+        { params: { userId: userId } }
+      );
+      const fetchedIncome = response.data.financialInfo.monthlyIncome;
+      if (fetchedIncome) {
+        setIncomes([{ source: "Salary", amount: Math.max(0, parseFloat(fetchedIncome)) }]);
+      }
+    } catch (error) {
+      console.error("Error fetching income:", error);
+      alert("An error occurred while fetching income data.");
+    }
+  };
+
   const handleIncomeChange = (index, field, value) => {
-    const newIncomes = [...incomes];
-    newIncomes[index][field] = value;
-    setIncomes(newIncomes);
+    setIncomes(prevIncomes => {
+      const newIncomes = [...prevIncomes];
+      if (field === "amount") {
+        value = Math.max(0, parseFloat(value) || 0);
+      }
+      newIncomes[index] = { ...newIncomes[index], [field]: value };
+      return newIncomes;
+    });
   };
 
   const addIncome = () => {
-    setIncomes([...incomes, { source: "", amount: 0 }]);
+    setIncomes(prevIncomes => [...prevIncomes, { source: "", amount: 0 }]);
   };
 
   const removeIncome = (index) => {
@@ -119,14 +124,16 @@ const BudgetOptimizer = () => {
   };
 
   const optimizeBudget = async () => {
+    
+    if (totalIncome === 0) {
+      alert("No income has been entered. Please enter your income before fetching expenses.");
+      return;
+    }
     setIsLoading(true);
     try {
       const response = await axios.post(
         `${process.env.REACT_APP_FASTURL}/budget/optimize`,
-        {
-          income: totalIncome,
-          expenses: expenses,
-        }
+        { income: totalIncome, expenses: expenses }
       );
       setOptimizedBudget(response.data.optimized_expenses);
       setSuggestions(response.data.suggestions);
@@ -143,22 +150,18 @@ const BudgetOptimizer = () => {
       return;
     }
 
+    if (totalIncome === 0) {
+      alert("No income has been entered. Please enter your income before fetching expenses.");
+      return;
+    }
+
     try {
-      console.log("Fetched exepense",userId);
       const response = await axios.post(
         `${process.env.REACT_APP_NODEURL}/api/expense/getexpensesdaterange`,
-        {
-          userId,
-          startDate: dateRange.start,
-          endDate: dateRange.end,
-        }
+        { userId, startDate: dateRange.start, endDate: dateRange.end }
       );
       const fetchedExpenses = response.data;
      
-      const totalIncome = incomes.reduce(
-        (sum, income) => sum + Number(income.amount),
-        0
-      );
       const totalExpense = fetchedExpenses.reduce(
         (sum, expense) => sum + parseFloat(expense.amount),
         0
@@ -237,6 +240,7 @@ const BudgetOptimizer = () => {
   const totalExpenses = (totalExpensePercentage / 100) * totalIncome;
   const isOverBudget = totalExpensePercentage > 100;
   const surplus = totalIncome - totalExpenses;
+
   const BudgetSummary = ({
     title,
     expenses,
@@ -264,15 +268,13 @@ const BudgetOptimizer = () => {
               <Grid item xs={6}>
                 <ListItemText
                   primary="Total Income"
-                  secondary={`$${totalIncome.toFixed(2)}`}
+                  secondary={`₹${totalIncome.toFixed(2)}`}
                 />
               </Grid>
               <Grid item xs={6}>
                 <ListItemText
                   primary="Total Expenses"
-                  secondary={`$${totalExpenses.toFixed(
-                    2
-                  )} (${totalExpensePercentage.toFixed(2)}%)`}
+                  secondary={`₹${totalExpenses.toFixed(2)} (${totalExpensePercentage.toFixed(2)}%)`}
                 />
               </Grid>
             </Grid>
@@ -286,7 +288,7 @@ const BudgetOptimizer = () => {
                     primary={category}
                     secondary={
                       <span>
-                        {percentage.toFixed(2)}% ($
+                        {percentage.toFixed(2)}% (₹
                         {((totalIncome * percentage) / 100).toFixed(2)})
                         {isOptimized && originalExpenses && (
                           <span
@@ -301,9 +303,7 @@ const BudgetOptimizer = () => {
                             }}
                           >
                             (
-                            {(percentage - originalExpenses[category]).toFixed(
-                              2
-                            )}
+                            {(percentage - originalExpenses[category]).toFixed(2)}
                             %)
                           </span>
                         )}
@@ -322,17 +322,10 @@ const BudgetOptimizer = () => {
         )}
         {surplus > 0 && (
           <Alert severity="success" sx={{ mt: 2 }}>
-            Savings: $
+            Savings: ₹
             {isOptimized
-              ? `${(
-                  (optimizedBudget.Savings.toFixed(2) / 100) *
-                  totalIncome
-                ).toFixed(2)} (${optimizedBudget.Savings.toFixed(
-                  2
-                )}% of income)`
-              : `${((expenses.Savings.toFixed(2) / 100) * totalIncome).toFixed(
-                  2
-                )} (${expenses.Savings.toFixed(2)}% of income)`}
+              ? `${((optimizedBudget.Savings.toFixed(2) / 100) * totalIncome).toFixed(2)} (${optimizedBudget.Savings.toFixed(2)}% of income)`
+              : `${((expenses.Savings.toFixed(2) / 100) * totalIncome).toFixed(2)} (${expenses.Savings.toFixed(2)}% of income)`}
           </Alert>
         )}
 
@@ -354,6 +347,7 @@ const BudgetOptimizer = () => {
       </Paper>
     );
   };
+
   return (
     <Container maxWidth="lg">
       <Box sx={{ flexGrow: 1, py: 4 }}>
@@ -364,49 +358,43 @@ const BudgetOptimizer = () => {
           {!optimizedBudget ? (
             <>
               <Grid item xs={12} md={6}>
-                <Paper elevation={3} sx={{ p: 3 }}>
-                  <Typography variant="h6" gutterBottom>
-                    Income
-                  </Typography>
-                  {incomes.map((income, index) => (
-                    <Box
-                      key={index}
-                      sx={{ display: "flex", alignItems: "center", mb: 2 }}
-                    >
-                      <Select
-                        value={income.source}
-                        onChange={(e) =>
-                          handleIncomeChange(index, "source", e.target.value)
-                        }
-                        sx={{ mr: 1, minWidth: 120 }}
-                      >
-                        <MenuItem value="Salary">Salary</MenuItem>
-                        <MenuItem value="Investments">Investments</MenuItem>
-                        <MenuItem value="Freelance">Freelance</MenuItem>
-                        <MenuItem value="Other">Other</MenuItem>
-                      </Select>
-                      <TextField
-                        label="Amount"
-                        type="number"
-                        value={income.amount}
-                        onChange={(e) =>
-                          handleIncomeChange(index, "amount", e.target.value)
-                        }
-                        sx={{ mr: 1, flexGrow: 1 }}
-                      />
-                      <IconButton onClick={() => removeIncome(index)}>
-                        <DeleteIcon />
-                      </IconButton>
-                    </Box>
-                  ))}
-                  <Button
-                    startIcon={<AddIcon />}
-                    onClick={addIncome}
-                    variant="outlined"
-                    fullWidth
-                  >
-                    Add Income
-                  </Button>
+              <Paper elevation={3} sx={{ p: 3 }}>
+              <Typography variant="h6" gutterBottom>
+                Income
+              </Typography>
+              {incomes.map((income, index) => (
+                <Box
+                  key={index}
+                  sx={{ display: "flex", alignItems: "center", mb: 2 }}
+                >
+                  <TextField
+                    label="Source"
+                    value={income.source}
+                    sx={{ mr: 1, flexGrow: 1 }}
+                  />
+                  <TextField
+                    label="Amount"
+                    type="number"
+                    value={income.amount}
+                    onChange={(e) =>
+                      handleIncomeChange(index, "amount", e.target.value)
+                    }
+                    inputProps={{ min: 0 }}
+                    sx={{ mr: 1, flexGrow: 1 }}
+                  />
+                  <IconButton onClick={() => removeIncome(index)}>
+                    <DeleteIcon />
+                  </IconButton>
+                </Box>
+              ))}
+              <Button
+                startIcon={<AddIcon />}
+                onClick={addIncome}
+                variant="outlined"
+                fullWidth
+              >
+                Add Income
+              </Button>
                   <Typography variant="h6" gutterBottom sx={{ mt: 3 }}>
                     Expenses (%)
                   </Typography>
