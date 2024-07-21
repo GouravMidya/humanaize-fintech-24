@@ -63,7 +63,7 @@ function AppContent() {
           path="/login"
           element={
             isLoggedIn ? (
-              <Navigate to="/home" />
+              <Navigate to="/" />
             ) : (
               <Login onLogin={handleLogin} />
             )

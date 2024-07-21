@@ -46,6 +46,8 @@ const userSchema = new mongoose.Schema({
       ref: "FinancialGoal",
     },
   ],
+},{ 
+  versionKey: false 
 });
 
 userSchema.pre("save", async function () {

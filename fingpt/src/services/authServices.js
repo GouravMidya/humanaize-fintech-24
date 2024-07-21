@@ -14,12 +14,10 @@ const signUp = async (formData) => {
 
 const login = async (formData) => {
   try {
-    console.log(formData);
     const response = await axios.post(
       `${process.env.REACT_APP_NODEURL}/api/auth/login`,
       formData
     );
-    console.log(response.data);
     return response.data;
   } catch (err) {
     throw err;
@@ -53,7 +51,6 @@ export const getUsername = async () => {
         },
       }
     );
-    console.log(response.data);
     return response.data;
   } catch (error) {
     throw error;

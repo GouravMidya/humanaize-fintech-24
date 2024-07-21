@@ -36,7 +36,7 @@ const Chatbot = ({ initialMessage }) => {
   const [randomQuestions, setRandomQuestions] = useState([]); // State to store the randomized questions
   const [isToggled, setIsToggled] = useState(false); // State to manage button toggle
   const [userId, setUserId] = useState("");
-
+  const [convname,setConvname] = useState("New Chat");
   useEffect(() => {
     const fetchUserDataAndConversations = async () => {
       try {
@@ -61,9 +61,18 @@ const Chatbot = ({ initialMessage }) => {
             };
           }));
           
-          console.log('Fetched conversations:', fetchedConversations);
-          setConversations(fetchedConversations);
-          setCurrentConversationId(fetchedConversations[0].id);
+          // Remove duplicates based on conversation ID
+          const uniqueConversations = fetchedConversations.reduce((acc, current) => {
+            const x = acc.find(item => item.id === current.id);
+            if (!x) {
+              return acc.concat([current]);
+            } else {
+              return acc;
+            }
+          }, []);
+          
+          setConversations(uniqueConversations);
+          setCurrentConversationId(uniqueConversations[0].id);
         } else {
           console.log('No conversations found, using default');
         }
@@ -101,9 +110,25 @@ const Chatbot = ({ initialMessage }) => {
 
   useEffect(() => {
     if (initialMessage) {
-      onSend(initialMessage);
+      setInput(initialMessage);
     }
   }, [initialMessage]);
+
+  const handleUpdateChatName = async (id, newName) => {
+    try {
+      await axios.put(`${process.env.REACT_APP_NODEURL}/api/conversations`, {
+        userId,
+        chatSessionId: id,
+        newChatName: newName
+      });
+      
+      setConversations(conversations.map(conv => 
+        conv.id === id ? { ...conv, name: newName } : conv
+      ));
+    } catch (error) {
+      console.error("Error updating chat name:", error);
+    }
+  };
 
   const getRandomQuestions = useCallback(() => {
     const shuffled = questions.sort(() => 0.5 - Math.random());
@@ -115,6 +140,7 @@ const Chatbot = ({ initialMessage }) => {
   }, [getRandomQuestions]);
 
   const onSend = async (message) => {
+    if (!message && !input.trim()) return;
     setIsSending((prev) => ({ ...prev, [currentConversationId]: true }));
     await handleSend(
       message || input,
@@ -126,6 +152,15 @@ const Chatbot = ({ initialMessage }) => {
     );
     setShowQuestions(false);
     setIsSending((prev) => ({ ...prev, [currentConversationId]: false }));
+    try {
+      await axios.post("http://localhost:8001/api/conversations", {
+        id: currentConversationId,
+        userId: userId, // Include the userId in the request
+        chatName: convname, // Send the conversation name
+      });
+    } catch (error) {
+      console.error("Error creating new conversation:", error);
+    }
   };
 
   const handleNewConversation = async () => {
@@ -142,26 +177,16 @@ const Chatbot = ({ initialMessage }) => {
     }
 
     const newId = uuidv4();
-    const newName = "New Chat"; // Default name or provide a way to input name
-
     setConversations([
       ...conversations,
-      { id: newId, messages: [], name: newName },
+      { id: newId, messages: [], name: convname },
     ]);
     setCurrentConversationId(newId);
     setIsSending((prev) => ({ ...prev, [newId]: false }));
     setShowQuestions(true); // Show questions for the new conversation
     setRandomQuestions(getRandomQuestions()); // Update questions for the new conversation
 
-    try {
-      await axios.post("http://localhost:8001/api/conversations", {
-        id: newId,
-        userId: userId, // Include the userId in the request
-        chatName: newName, // Send the conversation name
-      });
-    } catch (error) {
-      console.error("Error creating new conversation:", error);
-    }
+    
   };
 
   const handleConversationClick = (id) => {
@@ -198,12 +223,15 @@ const Chatbot = ({ initialMessage }) => {
   };
 
   const handleEditConversation = (id, newName) => {
-    setConversations(
-      conversations.map((conv) =>
-        conv.id === id ? { ...conv, name: newName } : conv
-      )
-    );
-  };
+  handleUpdateChatName(id, newName);
+};
+
+const handleKeyPress = (event) => {
+  if (event.key === 'Enter' && !event.shiftKey) {
+    event.preventDefault();
+    onSend();
+  }
+};
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -332,47 +360,44 @@ const Chatbot = ({ initialMessage }) => {
             justifyContent="center"
           >
             <TextField
-              style={{
-                padding: "0.5rem",
-                maxWidth: "70%",
-                backgroundColor:
-                  theme.palette.mode === "dark"
-                    ? "rgba(255, 255, 255, 0.05)"
-                    : "rgba(0, 0, 0, 0.05)",
-              }}
-              fullWidth
-              variant="outlined"
-              placeholder="Type your message..."
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton
-                      color={
-                        theme.palette.mode === "dark" ? "default" : "primary"
-                      }
-                      onClick={() => onSend()}
-                      disabled={
-                        !input.trim() || isSending[currentConversationId]
-                      }
-                      style={{
-                        color:
-                          theme.palette.mode === "dark"
-                            ? "rgba(255, 255, 255, 0.7)"
-                            : theme.palette.primary.main,
-                      }}
-                    >
-                      {isSending[currentConversationId] ? (
-                        <CircularProgress size={24} />
-                      ) : (
-                        <SendIcon />
-                      )}
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-            />
+  style={{
+    padding: "0.5rem",
+    maxWidth: "70%",
+    backgroundColor:
+      theme.palette.mode === "dark"
+        ? "rgba(255, 255, 255, 0.05)"
+        : "rgba(0, 0, 0, 0.05)",
+  }}
+  fullWidth
+  variant="outlined"
+  placeholder="Type your message..."
+  value={input}
+  onChange={(e) => setInput(e.target.value)}
+  onKeyPress={handleKeyPress}
+  InputProps={{
+    endAdornment: (
+      <InputAdornment position="end">
+        <IconButton
+          color={theme.palette.mode === "dark" ? "default" : "primary"}
+          onClick={() => onSend()}
+          disabled={!input.trim() || isSending[currentConversationId]}
+          style={{
+            color:
+              theme.palette.mode === "dark"
+                ? "rgba(255, 255, 255, 0.7)"
+                : theme.palette.primary.main,
+          }}
+        >
+          {isSending[currentConversationId] ? (
+            <CircularProgress size={24} />
+          ) : (
+            <SendIcon />
+          )}
+        </IconButton>
+      </InputAdornment>
+    ),
+  }}
+/>
           </Box>
         )}
       </Box>

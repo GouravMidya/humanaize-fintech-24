@@ -49,10 +49,10 @@ export const Login = async (req, res, next) => {
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
+    console.log(user,isMatch);
     if (!isMatch) {
       return res.status(400).json({ message: "Incorrect password or email" });
     }
-
     const token = createSecretToken(user._id, user.username);
     res.cookie("token", token, {
       withCredentials: true,

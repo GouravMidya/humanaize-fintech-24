@@ -47,7 +47,7 @@ const Login = ({ onLogin }) => {
       const { token } = await login(formData);
       localStorage.setItem('jwt', token);
       onLogin();
-      navigate('/home');
+      navigate('/');
     } catch (err) {
       setError('Invalid email or password. Please try again.');
     } finally {

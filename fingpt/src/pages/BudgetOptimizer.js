@@ -108,9 +108,10 @@ const BudgetOptimizer = () => {
 
   const handleExpenseChange = (category, value) => {
     const newExpenses = { ...expenses, [category]: value };
-    const totalExpensePercentage = Object.entries(newExpenses)
-      .filter(([cat]) => cat !== "Savings")
-      .reduce((sum, [, val]) => sum + val, 0);
+    const totalExpensePercentage = Object.entries(expenses)
+  .filter(([category]) => category !== "Savings")
+  .reduce((sum, [, value]) => sum + value, 0);
+  
     const savingsPercentage = Math.max(100 - totalExpensePercentage, 0);
     setExpenses({ ...newExpenses, Savings: savingsPercentage });
   };
@@ -264,8 +265,11 @@ const BudgetOptimizer = () => {
       adjustedExpenses.Savings = 0;
     }
 
-    const totalExpenses = (Object.values(adjustedExpenses).reduce((sum, percentage) => sum + percentage, 0) / 100) * totalIncome;
-    const surplus = totalIncome - totalExpenses;
+    const totalExpenses = (Object.entries(adjustedExpenses)
+  .filter(([category]) => category !== "Savings")
+  .reduce((sum, [, percentage]) => sum + percentage, 0) / 100) * totalIncome;
+  
+  const surplus = totalIncome - totalExpenses;
 
     const pieChartData = Object.entries(adjustedExpenses).map(
       ([category, percentage], index) => ({

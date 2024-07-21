@@ -177,7 +177,7 @@ const ExpenseTracker = () => {
       const expenseData = [
         format(new Date(expense.date), "MMM dd, yyyy"),
         expense.category,
-        `$${parseFloat(expense.amount).toFixed(2)}`,
+        `Rs. ${parseFloat(expense.amount).toFixed(2)}`,
         expense.description,
       ];
       tableRows.push(expenseData);
@@ -204,7 +204,7 @@ const ExpenseTracker = () => {
     );
 
     // Add total expenses
-    doc.text(`Total Expenses: $${totalAmount.toFixed(2)}`, 14, 70);
+    doc.text(`Total Expenses: Rs. ${totalAmount.toFixed(2)}`, 14, 70);
 
     // Add table
     doc.autoTable({
@@ -285,14 +285,14 @@ const ExpenseTracker = () => {
             return format(context[0].parsed.x, "MMMM d, yyyy");
           },
           label: (context) => {
-            return `Total: ${context.parsed.y.toFixed(2)}`;
+            return `Total: Rs. ${context.parsed.y.toFixed(2)}`;
           },
           afterBody: (context) => {
             const dataIndex = context[0].dataIndex;
             const dayExpenses = context[0].dataset.data[dataIndex].expenses;
             return dayExpenses.map(
               (expense) =>
-                `${expense.category}: $${expense.amount} - ${
+                `${expense.category}: Rs. ${expense.amount} - ${
                   expense.description || "No description"
                 }`
             );
@@ -561,7 +561,7 @@ const ExpenseTracker = () => {
                       })}
                     >
                       <Typography variant="body1">
-                        ${expense.amount} - {expense.category}
+                      ₹ {expense.amount} - {expense.category}
                       </Typography>
                       <Typography variant="body2" color="text.secondary">
                         {new Date(expense.date).toLocaleDateString()} -{" "}
@@ -659,7 +659,7 @@ const ExpenseTracker = () => {
                       <TableCell>
                         {new Date(expense.date).toLocaleDateString()}
                       </TableCell>
-                      <TableCell>${expense.amount}</TableCell>
+                      <TableCell>₹ {expense.amount}</TableCell>
                       <TableCell>{expense.category}</TableCell>
                       <TableCell>{expense.description}</TableCell>
                     </TableRow>

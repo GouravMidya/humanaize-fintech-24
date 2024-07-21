@@ -88,7 +88,7 @@ const SignUp = ({ onRegister }) => {
         financialInfo
       );
       setOpenFinancialDialog(false);
-      navigate("/home");
+      navigate("/");
     } catch (error) {
       console.error("Error submitting financial information:", error);
       setErrorMessage(
